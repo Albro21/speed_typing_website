@@ -1,7 +1,15 @@
-const storyText = document.getElementById('story').getAttribute('data-text');
+const storyText = document.getElementById('story').dataset.text;
+const storyId = document.getElementById('story').dataset.storyId;
+const duration = document.getElementById('duration').dataset.duration * 60;
+const testType = document.getElementById('duration').dataset.testType;
+
+let wpm = 0;
+let mistypedLetters = {};
+let allLetterTimings = {};
+let speedCurve = [];
+
 let correctLettersCount = 0;
 let incorrectLettersCount = 0;
-
 
 // Split the text into letters
 const letters = storyText
@@ -24,18 +32,71 @@ const letter_spans = textDisplay.querySelectorAll('.letter');
 // Highlight the first letter
 letter_spans[0].classList.add('text-decoration-underline', 'text-primary');
 
-
-
 // Focus on the input when it loses focus
 const input = document.getElementById("userInput");
 input.addEventListener('blur', (event) => {
     input.focus();
 });
 
-
-
 let timerInterval = null; // To store the interval ID
 const timeLeftElement = document.getElementById("timeLeft");
+
+function calculateAverageLetterTimings() {
+    const averageLetterDelays = {};
+
+    for (const letter in allLetterTimings) {
+        const delays = allLetterTimings[letter];
+        const sum = delays.reduce((a, b) => a + b, 0);
+        const avg = sum / delays.length;
+        averageLetterDelays[letter] = parseFloat(avg.toFixed(2)); // Rounded to 2 decimal places
+    }
+
+    return averageLetterDelays;
+}
+
+async function endTest() {
+    const letterTimings = calculateAverageLetterTimings();
+
+    url = `/result/create/`;
+    method = 'POST';
+    requestBody = JSON.stringify({
+        'story_id': storyId,
+        'test_type': testType,
+        'wpm': wpm,	
+        'duration': duration,
+        'accuracy': parseFloat(((correctLettersCount / (correctLettersCount + incorrectLettersCount)) * 100).toFixed(2)),
+        'correct_count': correctLettersCount,
+        'mistake_count': incorrectLettersCount,
+        'mistyped_letters': mistypedLetters,
+        'letter_timings': letterTimings,
+        'speed_curve': speedCurve,
+    });
+
+    console.log(requestBody);
+    const data = await sendRequest(url, method, requestBody);
+
+    const resultId = data.result_id;
+    window.location.href = `/result/${resultId}/`;
+}
+
+function updateTimeLeft(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    timeLeftElement.textContent = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+// Calculate and display WPM
+let startTime = null;
+wpmElement  = document.getElementById("wpm");
+
+function calculateWPM() {
+    const elapsedTimeInMinutes = (Date.now() - startTime) / 60000;
+    if (elapsedTimeInMinutes > 0) {
+        wpm = Math.floor((correctLettersCount / 5) / elapsedTimeInMinutes);
+    }
+    wpmElement.textContent = wpm;
+    speedCurve.push(wpm);
+}
 
 // Timer update function
 function startTimer(duration) {
@@ -47,46 +108,13 @@ function startTimer(duration) {
         
         if (duration <= 0) {
             clearInterval(timerInterval);
-            alert('Time is up!');
+            endTest();
         }
     }, 1000);
 }
 
-function updateTimeLeft(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    timeLeftElement.textContent = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
-
 // Initialize the timer
-let duration = document.getElementById('duration').getAttribute('data-duration') * 60;
 updateTimeLeft(duration);
-
-
-
-// Calculate and display WPM
-let startTime = null;
-wpmElement  = document.getElementById("wpm");
-
-function calculateWPM() {
-    const elapsedTimeInMinutes = (Date.now() - startTime) / 60000;
-    let wpm = 0;
-    if (elapsedTimeInMinutes > 0) {
-        wpm = Math.floor((correctLettersCount / 5) / elapsedTimeInMinutes);
-    }
-    wpmElement.textContent = wpm;
-}
-
-
-// Calculate and display accuracy
-accuracyElement = document.getElementById("accuracy");
-function calculateAccuracy() {
-    console.log(correctLettersCount, incorrectLettersCount);
-    const accuracy = (correctLettersCount / (correctLettersCount + incorrectLettersCount)) * 100;
-    accuracyElement.textContent = `${accuracy.toFixed(2)}%`;
-}
-
-
 
 // Handle typing
 let currentLetterIndex = 0;
@@ -94,6 +122,15 @@ let lastLineTop = null;
 let currentLineIndex = 0;
 let timerStarted = false;
 
+// Calculate and display accuracy
+accuracyElement = document.getElementById("accuracy");
+function calculateAccuracy() {
+    const accuracy = (correctLettersCount / (correctLettersCount + incorrectLettersCount)) * 100;
+    accuracyElement.textContent = `${accuracy.toFixed(2)}%`;
+}
+
+// Calculate letter timings
+let lastKeyTime = null; 
 
 input.addEventListener('input', (event) => {
     const typedLetter = input.value.slice(-1);
@@ -111,7 +148,19 @@ input.addEventListener('input', (event) => {
             startTime = Date.now();
             timerStarted = true;
         }
+        const now = Date.now();
+
+        if (lastKeyTime !== null) {
+            const delay = now - lastKeyTime;
+            const expectedLetter = storyText[currentLetterIndex];  // Not typedLetter — since we're basing it on expected
+            if (!allLetterTimings[expectedLetter]) {
+                allLetterTimings[expectedLetter] = [];
+            }
+            allLetterTimings[expectedLetter].push(delay);
+        }
+        lastKeyTime = now;
     } else {
+        mistypedLetters[expectedLetter] = (mistypedLetters[expectedLetter] || 0) + 1;
         incorrectLettersCount++;
         currentLetterSpan.classList.add('bg-danger');
     }
@@ -149,8 +198,6 @@ input.addEventListener('input', (event) => {
         alert('You have completed the text!');
     }
 });
-
-
 
 // Disable certain keys
 input.addEventListener('keydown', (event) => {

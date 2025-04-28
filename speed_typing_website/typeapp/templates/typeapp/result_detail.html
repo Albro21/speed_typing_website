@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ time }} Minute Test{% endblock title %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/result.css' %}">
+{% endblock styles %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-11 d-flex flex-column justify-content-center align-items-center mt-5 gap-3">
+            <div class="d-flex gap-5 justify-content-center align-items-center">
+                <div class="d-flex flex-column justify-content-center align-items-center circle">
+                    <h2 class="fw-bold">{{ result.wpm }}</h2>
+                    <h5 class="fw-bold">WPM</h5>
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <h1>TEST RESULTS</h1>
+                    <div class="d-flex badges gap-3">
+                        <span id="mistakes-count">Mistakes: {{ result.mistake_count }}</span>
+                        <span id="correct-count">Total letters: {{ result.correct_count }}</span>
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-center align-items-center circle">
+                    <h2 class="fw-bold">{{ result.accuracy }}%</h2>
+                    <h5 class="fw-bold">Accuracy</h5>
+                </div>
+            </div>
+            <div class="d-flex flex-column w-75 gap-3">
+                <canvas id="speedChart" width="400" height="120"></canvas>
+                <canvas id="mistakesChart" width="400" height="120"></canvas>
+                <canvas id="delayChart" width="400" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock content%}
+    
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const speedCurve = {{ result.speed_curve|safe }};
+        const mistypedLetters = {{ result.mistyped_letters|safe }};
+        const letterTimings = {{ result.letter_timings|safe }};
+    </script>
+    <script src="{% static 'js/result.js' %}"></script>
+{% endblock scripts %}

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from . import models
+from .models import Story, TypingTestResult
 
 
-admin.site.register(models.Story)
+admin.site.register(Story)
+admin.site.register(TypingTestResult)
