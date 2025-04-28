@@ -57,6 +57,18 @@ function calculateAverageLetterTimings() {
 async function endTest() {
     const letterTimings = calculateAverageLetterTimings();
 
+    // Sort mistypedLetters by count descending
+    const sortedMistypedLetters = Object.fromEntries(
+        Object.entries(mistypedLetters)
+            .sort(([, a], [, b]) => b - a)
+    );
+
+    // Sort letterTimings by average delay descending
+    const sortedLetterTimings = Object.fromEntries(
+        Object.entries(letterTimings)
+            .sort(([, a], [, b]) => b - a)
+    );
+
     url = `/result/create/`;
     method = 'POST';
     requestBody = JSON.stringify({
@@ -67,8 +79,8 @@ async function endTest() {
         'accuracy': parseFloat(((correctLettersCount / (correctLettersCount + incorrectLettersCount)) * 100).toFixed(2)),
         'correct_count': correctLettersCount,
         'mistake_count': incorrectLettersCount,
-        'mistyped_letters': mistypedLetters,
-        'letter_timings': letterTimings,
+        'mistyped_letters': sortedMistypedLetters,
+        'letter_timings': sortedLetterTimings,
         'speed_curve': speedCurve,
     });
 
