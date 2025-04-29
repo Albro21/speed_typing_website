@@ -11,9 +11,9 @@
 					<span class="display-5 fs-2">Stats:</span>
 				</div>
 				<ul class="list-group list-group-flush">
-					<li class="list-group-item list-group-item-light list-group-item-action">Avg. Speed: 33 WPM</li>
-					<li class="list-group-item list-group-item-light list-group-item-action">Avg. Accuracy: 93 %</li>
-					<li class="list-group-item list-group-item-light list-group-item-action">Total Time: 60 h</li>
+					<li class="list-group-item list-group-item-light list-group-item-action">Average Speed: {{ avg_wpm }} WPM</li>
+					<li class="list-group-item list-group-item-light list-group-item-action">Average Accuracy: {{ avg_accuracy }}%</li>
+					<li class="list-group-item list-group-item-light list-group-item-action">Total Time: {{ total_time }}</li>
 				</ul>
 			</div>
 		</div>
@@ -39,7 +39,7 @@
 					<span class="display-5 fs-2">Daily Goal:</span>
 				</div>
 				<div class="card-body text-center">
-					<h1 class="display-5">3:43 / 10:00 min</h1>
+					<h1 class="display-5">{{ daily_goal }}</h1>
 				</div>
 			</div>
 		</div>
