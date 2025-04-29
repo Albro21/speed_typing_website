@@ -12,7 +12,24 @@ def index(request):
     return render(request, 'typeapp/index.html')
 
 def timedtests(request):
-    return render(request, 'typeapp/timedtests.html')
+    typing_results = request.user.typing_results.order_by("created_at")
+    
+    labels = []
+    wpm_data = []
+    accuracy_data = []
+    
+    for result in typing_results:
+        labels.append(result.created_at.strftime('%d/%m/%y'))
+        wpm_data.append(result.wpm)
+        accuracy_data.append(result.accuracy)
+    
+    context = {
+        "labels": labels,
+        "wpm_data": wpm_data,
+        "accuracy_data": accuracy_data,
+    }
+    
+    return render(request, 'typeapp/timedtests.html', context)
 
 def timedtest(request, time):
     valid_durations = [1, 3, 5]
