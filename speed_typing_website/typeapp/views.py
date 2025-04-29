@@ -8,25 +8,44 @@ import json
 from .models import Story, TypingTestResult
 
 
+def get_results_history(typing_results):
+    if typing_results:
+        labels = []
+        wpm_data = []
+        accuracy_data = []
+        
+        for result in typing_results:
+            labels.append(result.created_at.strftime('%d/%m/%y'))
+            wpm_data.append(result.wpm)
+            accuracy_data.append(result.accuracy)
+        
+        return {
+            "labels": labels,
+            "wpm_data": wpm_data,
+            "accuracy_data": accuracy_data
+        }
+    return None
+
 def index(request):
     return render(request, 'typeapp/index.html')
 
+@login_required
 def timedtests(request):
-    typing_results = request.user.typing_results.order_by("created_at")
+    typing_results = request.user.typing_results.filter(test_type='timed').order_by("created_at")
     
-    labels = []
-    wpm_data = []
-    accuracy_data = []
+    results_1m = typing_results.filter(duration=60)
+    chart_data_1m = get_results_history(results_1m)
     
-    for result in typing_results:
-        labels.append(result.created_at.strftime('%d/%m/%y'))
-        wpm_data.append(result.wpm)
-        accuracy_data.append(result.accuracy)
+    results_3m = typing_results.filter(duration=180)
+    chart_data_3m = get_results_history(results_3m)
+    
+    results_5m = typing_results.filter(duration=300)
+    chart_data_5m= get_results_history(results_5m)
     
     context = {
-        "labels": labels,
-        "wpm_data": wpm_data,
-        "accuracy_data": accuracy_data,
+        "chart_data_1m": chart_data_1m,
+        "chart_data_3m": chart_data_3m,
+        "chart_data_5m": chart_data_5m,
     }
     
     return render(request, 'typeapp/timedtests.html', context)

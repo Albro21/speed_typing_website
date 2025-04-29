@@ -13,19 +13,31 @@
             </div>
             <div class="tab-content container-fluid" id="v-pills-tabContent">
                 <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
-                    <canvas id="1m-history" height="120"></canvas>
+                    {% if chart_data_1m %}
+                        <canvas id="1m-history" height="120"></canvas>
+                    {% else %}
+                        <h2>You have not completed any 1-minute tests yet.</h2>
+                    {% endif %}
                     <div class="mt-4">
                         <a href="{% url 'timedtest' time=1 %}" class="btn btn-primary"><h3>Start 1 Minute Test</h3></a>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
-                    <img src="{% static 'img/aboba.png' %}" alt="graph">
+                    {% if chart_data_3m %}
+                        <canvas id="3m-history" height="120"></canvas>
+                    {% else %}
+                        <h2>You have not completed any 3-minute tests yet.</h2>
+                    {% endif %}
                     <div class="mt-4">
                         <a href="{% url 'timedtest' time=3 %}" class="btn btn-primary"><h3>Start 3 Minute Test</h3></a>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="v-pills-disabled" role="tabpanel" aria-labelledby="v-pills-disabled-tab" tabindex="0">
-                    <img src="{% static 'img/aboba.png' %}" alt="graph">
+                    {% if chart_data_5m %}
+                        <canvas id="5m-history" height="120"></canvas>
+                    {% else %}
+                        <h2>You have not completed any 5-minute tests yet.</h2>
+                    {% endif %}
                     <div class="mt-4">
                         <a href="{% url 'timedtest' time=5 %}" class="btn btn-primary"><h3>Start 5 Minute Test</h3></a>
                     </div>
@@ -38,9 +50,9 @@
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const labels = {{ labels|safe }};
-        const wpmData = {{ wpm_data }};
-        const accuracyData = {{ accuracy_data }};
+        const chartData1m = {{ chart_data_1m|default:"null"|safe }};
+        const chartData3m = {{ chart_data_3m|default:"null"|safe }};
+        const chartData5m = {{ chart_data_5m|default:"null"|safe }};
     </script>
     <script src="{% static 'js/timedtests.js' %}"></script>
 {% endblock scripts %}
