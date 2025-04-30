@@ -11,9 +11,9 @@
 					<span class="display-5 fs-2">Stats:</span>
 				</div>
 				<ul class="list-group list-group-flush">
-					<li class="list-group-item list-group-item-light list-group-item-action">Average Speed: {{ avg_wpm }} WPM</li>
-					<li class="list-group-item list-group-item-light list-group-item-action">Average Accuracy: {{ avg_accuracy }}%</li>
-					<li class="list-group-item list-group-item-light list-group-item-action">Total Time: {{ total_time }}</li>
+					<li class="list-group-item list-group-item-light list-group-item-action">Average Speed: {{ request.user.avg_wpm }} WPM</li>
+					<li class="list-group-item list-group-item-light list-group-item-action">Average Accuracy: {{ request.user.avg_accuracy }}%</li>
+					<li class="list-group-item list-group-item-light list-group-item-action">Total Time: {{ request.user.total_time_formatted }}</li>
 				</ul>
 			</div>
 		</div>
@@ -26,8 +26,8 @@
 				</div>
 				<img src="" class="card-img-top" alt="Level 5">
 				<div class="card-body">
-					<h5 class="card-title">Level 5</h5>
-					<p>13,134xp / 15,000xp</p>
+					<h5 class="card-title">Level {{ request.user.level }}</h5>
+					<p>{{ request.user.xp }} / 15,000xp</p>
 				</div>
 			</div>
 		</div>
@@ -39,7 +39,7 @@
 					<span class="display-5 fs-2">Daily Goal:</span>
 				</div>
 				<div class="card-body text-center">
-					<h1 class="display-5">{{ daily_goal }}</h1>
+					<h1 class="display-5">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h1>
 				</div>
 			</div>
 		</div>

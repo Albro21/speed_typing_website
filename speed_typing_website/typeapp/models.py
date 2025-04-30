@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 from django.utils.timezone import now
 
@@ -29,12 +28,12 @@ class TypingTestResult(models.Model):
         # ('quote', 'Quote'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='typing_results', blank=True, null=True)
+    user = models.ForeignKey("users.CustomUser", on_delete=models.CASCADE, related_name='typing_results', blank=True, null=True)
     test_type = models.CharField(max_length=10, choices=TEST_TYPE_CHOICES, blank=True, null=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='test_results', blank=True, null=True)
     
     wpm = models.FloatField(help_text="Words per minute", blank=True, null=True)
-    duration = models.FloatField(help_text="Duration in seconds", blank=True, null=True)
+    duration = models.PositiveIntegerField(help_text="Duration in seconds", blank=True, null=True)
     accuracy = models.FloatField(help_text="Accuracy in percentage", blank=True, null=True)
     correct_count = models.PositiveIntegerField(help_text="Total number of correct words", blank=True, null=True)
     mistake_count = models.PositiveIntegerField(help_text="Total number of mistakes", blank=True, null=True)

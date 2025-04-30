@@ -44,24 +44,7 @@ def format_total_time(seconds):
         return f"{minutes}m {secs}s"
 
 def index(request):
-    all_results = request.user.typing_results.all()
-    
-    today_results = all_results.filter(created_at__date=date.today())
-    total_seconds = int(sum(result.duration for result in today_results))
-    formatted_duration = format_daily_goal(total_seconds)
-    
-    avg_wpm = round(sum(result.wpm for result in all_results) / len(all_results), 2)
-    avg_accuracy = round(sum(result.accuracy for result in all_results) / len(all_results), 2)
-    total_time = format_total_time(int(sum(result.duration for result in all_results)))
-    
-    context = {
-        "daily_goal": f"{formatted_duration} / 15:00",
-        "avg_wpm": avg_wpm,
-        "avg_accuracy": avg_accuracy,
-        "total_time": total_time,
-    }
-    
-    return render(request, 'typeapp/index.html', context)
+    return render(request, 'typeapp/index.html')
 
 @login_required
 def timedtests(request):
