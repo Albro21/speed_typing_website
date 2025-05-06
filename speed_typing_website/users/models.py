@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     ]
     
     level = models.IntegerField(default=1)
-    xp = models.IntegerField(default=0)
+    exp = models.IntegerField(default=0)
     daily_goal = models.IntegerField(choices=DAILY_GOAL_CHOICES, default=10)
     
     @property

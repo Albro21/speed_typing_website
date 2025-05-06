@@ -1,100 +1,72 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block content %}	
-	<!-- Stats, Level, Daily Goal -->
-	<div class="row mt-5">
+{% block styles %} 
+	<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock styles %}
 
-		<!-- Stats -->
-		<div class="col">
-			<div class="card text-bg-light" style="min-height: 250px;">
-				<div class="card-header text-center border-primary">
-					<span class="display-5 fs-2">Stats:</span>
+{% block content %}
+	<div class="d-flex flex-column gap-3 my-4">
+
+		<div class="row gap-3 m-0">
+			<!-- Level card -->
+			<div class="col-3 d-flex flex-column p-3 bg-2 rounded card-hover" id="level-card">
+				<h2 class="mb-1">Level {{ request.user.level }}</h2>
+				<p class="mb-1">This is level phrase</p>
+				<div class="d-flex flex-column">
+					<div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="height: 25px">
+						<div class="progress-bar" style="width: 25%"></div>
+					</div>
+					<div style="white-space: nowrap">
+						{{ request.user.exp }} exp / 15,000 exp
+					</div>
 				</div>
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item list-group-item-light list-group-item-action">Average Speed: {{ request.user.avg_wpm }} WPM</li>
-					<li class="list-group-item list-group-item-light list-group-item-action">Average Accuracy: {{ request.user.avg_accuracy }}%</li>
-					<li class="list-group-item list-group-item-light list-group-item-action">Total Time: {{ request.user.total_time_formatted }}</li>
-				</ul>
+			</div>
+
+			<!-- Daily Goal -->
+			<div class="col-2 d-flex flex-column gap-2 justify-content-center py-2 px-3 bg-2 rounded card-hover">
+				<h2 class="text-center">Daily Goal</h3>
+				<h3 class="text-center">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
 			</div>
 		</div>
 
-		<!-- Level -->
-		<div class="col">
-			<div class="card text-bg-light" style="min-height: 250px;">
-				<div class="card-header text-center border-primary">
-					<span class="display-5 fs-2">Level:</span>
+		<!-- Stats cards -->
+		<div class="row gap-3 m-0">
+			<div class="col-3 d-flex flex-column gap-3 p-0">
+				
+				<!-- AVG Speed -->
+				<div class="d-flex flex-row gap-2 align-items-center py-2 px-3 bg-2 rounded card-hover">
+					<img src="{% static 'img/speed.svg' %}" width="40px" height="40px">
+					<div class="d-flex flex-column">
+						<h5 class="m-0">AVG. Speed</h5>
+						<h6 class="m-0">{{ request.user.avg_wpm }} WPM</h6>
+					</div>
 				</div>
-				<img src="" class="card-img-top" alt="Level 5">
-				<div class="card-body">
-					<h5 class="card-title">Level {{ request.user.level }}</h5>
-					<p>{{ request.user.xp }} / 15,000xp</p>
+				
+				<!-- AVG Accuracy -->
+				<div class="d-flex flex-row gap-2 align-items-center py-2 px-3 bg-2 rounded card-hover">
+					<img src="{% static 'img/accuracy.svg' %}" width="50px" height="50px">
+					<div class="d-flex flex-column">
+						<h5 class="m-0">AVG. Accuracy</h5>
+						<h6 class="m-0">{{ request.user.avg_accuracy }}%</h6>
+					</div>
+				</div>
+				
+				<!-- Typing Time -->
+				<div class="d-flex flex-row gap-2 align-items-center py-2 px-3 bg-2 rounded card-hover">
+					<img src="{% static 'img/typing_time.svg' %}" width="50px" height="50px">
+					<div class="d-flex flex-column">
+						<h5 class="m-0">Typing Time</h5>
+						<h6 class="m-0">{{ request.user.total_time_formatted }}</h6>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Daily Goal -->
-		<div class="col">
-			<div class="card text-bg-light" style="min-height: 250px;">
-				<div class="card-header text-center border-primary">
-					<span class="display-5 fs-2">Daily Goal:</span>
-				</div>
-				<div class="card-body text-center">
-					<h1 class="display-5">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h1>
-				</div>
+			<div class="col-2 d-flex flex-column gap-3 justify-content-center bg-2 rounded card-hover">
+				<h3 class="text-center">Practice</h3>
+				<a href="#" class="btn btn-primary w-100">Lessons</a>
+				<a href="{% url 'timedtests' %}" class="btn btn-primary w-100">Timed Tests</a>
+				<a href="{% url 'pagetests' %}" class="btn btn-primary w-100">Page Tests</a>
 			</div>
-		</div>
-
-	</div>
-
-	<!-- Activity Calendar -->
-	<!-- <div class="card mt-5">
-		<div class="card-header text-center border-primary">
-			<span class="display-5 fs-2">Activity Calendar:</span>
-		</div>
-		<div class="card-body">
-			
-		</div>
-	</div> -->
-
-	<!-- Practice -->
-	<div class="card text-center mt-5">
-		<div class="card-header">
-			<span class="display-5 fs-2">Practice</span>
-		</div>
-		<div class="row my-3 mx-3 justify-content-space-between">
-			<a href="#" class="btn btn-dark col">Lessons</a>
-			<a href="{% url 'timedtests' %}" class="btn btn-dark col mx-3">Timed Tests</a>
-			<a href="{% url 'pagetests' %}" class="btn btn-dark col">Page Tests</a>
-		</div>
-	</div>
-
-	<!-- Completed Lessons-->
-	<div class="card text-center mt-5">
-		<div class="card-header">
-			<span class="display-5 fs-2">Completed Lessons:</span>
-		</div>
-		<div class="card-body">
-
-		</div>
-	</div>
-
-	<!-- Speed Test Statistics -->
-	<div class="card text-center mt-5">
-		<div class="card-header">
-			<span class="display-5 fs-2">Speed Test Statistics:</span>
-		</div>
-		<div class="card-body">
-
-		</div>
-	</div>
-
-	<!-- Text Test Statistics -->
-	<div class="card text-center mt-5">
-		<div class="card-header">
-			<span class="display-5 fs-2">Text Test Statistics:</span>
-		</div>
-		<div class="card-body">
-
 		</div>
 	</div>
 {% endblock content %}
