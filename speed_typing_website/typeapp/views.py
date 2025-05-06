@@ -102,7 +102,9 @@ def create_result(request):
         speed_curve=data.get('speed_curve'),
     )
 
-    return JsonResponse({'status': 'success', 'result_id': result.id})
+    request.user.add_exp(int(data.get('duration')))
+
+    return JsonResponse({'status': 'success', 'result_id': result.id}, status=201)
 
 def result_detail(request, result_id):  
     result = TypingTestResult.objects.get(id=result_id)

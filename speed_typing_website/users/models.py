@@ -3,6 +3,19 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+class Level(models.Model):
+    level = models.IntegerField(unique=True)
+    title = models.CharField(max_length=20)
+    description = models.CharField(max_length=100)
+    exp_to_next = models.IntegerField()
+
+    class Meta:
+        ordering = ['level']
+
+    def __str__(self):
+        return f'Level {self.level} - {self.title}'
+
+
 class CustomUser(AbstractUser):
     DAILY_GOAL_CHOICES = [
         (5, '5:00'),
@@ -12,16 +25,20 @@ class CustomUser(AbstractUser):
         (30, '30:00'),
     ]
     
-    level = models.IntegerField(default=1)
+    level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, blank=True)
     exp = models.IntegerField(default=0)
     daily_goal = models.IntegerField(choices=DAILY_GOAL_CHOICES, default=10)
     
     @property
     def avg_wpm(self):
+        if not self.typing_results.all():
+            return 0
         return round(sum(result.wpm for result in self.typing_results.all()) / len(self.typing_results.all()), 2)
     
     @property
     def avg_accuracy(self):
+        if not self.typing_results.all():
+            return 0
         return round(sum(result.accuracy for result in self.typing_results.all()) / len(self.typing_results.all()), 2)
     
     @property
@@ -45,3 +62,17 @@ class CustomUser(AbstractUser):
     def today_total_time_formatted(self):
         minutes, secs = divmod(self.today_total_time, 60)
         return f"{minutes}:{secs:02d}"
+    
+    @property
+    def exp_progress(self):
+        return round(self.exp / self.level.exp_to_next * 100)
+    
+    def add_exp(self, amount):
+        self.exp += amount
+        while self.level and self.exp >= self.level.exp_to_next:
+            next_level = Level.objects.filter(level=self.level.level + 1).first()
+            if not next_level:
+                break
+            self.exp -= self.level.exp_to_next
+            self.level = next_level
+        self.save()
