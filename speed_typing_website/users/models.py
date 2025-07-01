@@ -1,6 +1,8 @@
 from datetime import date
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+from .managers import CustomUserManager
 
 
 class Level(models.Model):
@@ -24,6 +26,12 @@ class CustomUser(AbstractUser):
         (20, '20:00'),
         (30, '30:00'),
     ]
+    
+    username = None 
+    email = models.EmailField(_('email address'), unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = CustomUserManager()
     
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, blank=True)
     exp = models.IntegerField(default=0)

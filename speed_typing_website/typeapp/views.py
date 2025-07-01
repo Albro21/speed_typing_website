@@ -43,6 +43,7 @@ def format_total_time(seconds):
     else:
         return f"{minutes}m {secs}s"
 
+@login_required
 def index(request):
     return render(request, 'typeapp/index.html')
 
@@ -67,6 +68,7 @@ def timedtests(request):
     
     return render(request, 'typeapp/timedtests.html', context)
 
+@login_required
 def timedtest(request, time):
     valid_durations = [1, 3, 5]
     
@@ -106,9 +108,11 @@ def create_result(request):
 
     return JsonResponse({'status': 'success', 'result_id': result.id}, status=201)
 
+@login_required
 def result_detail(request, result_id):  
     result = TypingTestResult.objects.get(id=result_id)
     return render(request, 'typeapp/result_detail.html', {'result': result})
 
+@login_required
 def pagetests(request):
     return render(request, 'typeapp/pagetests.html')
