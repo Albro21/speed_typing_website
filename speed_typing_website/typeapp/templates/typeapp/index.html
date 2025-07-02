@@ -10,7 +10,7 @@
 
 		<div class="row gap-3 m-0">
 			<!-- Level card -->
-			<div class="col-3 d-flex flex-column p-3 bg-2 rounded card-hover" id="level-card">
+			<div class="col-3 card d-flex flex-column p-3" id="level-card">
 				<h2 class="mb-1">{{ request.user.level.title }}</h2>
 				<p class="mb-1">{{ request.user.level.description }}</p>
 				<div class="d-flex flex-column">
@@ -24,7 +24,7 @@
 			</div>
 
 			<!-- Daily Goal -->
-			<div class="col-2 d-flex flex-column gap-2 justify-content-center py-2 px-3 bg-2 rounded card-hover">
+			<div class="col-2 card d-flex flex-column gap-2 justify-content-center py-2 px-3">
 				<h2 class="text-center">Daily Goal</h3>
 				<h3 class="text-center">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
 			</div>
@@ -35,7 +35,7 @@
 			<div class="col-3 d-flex flex-column gap-3 p-0">
 				
 				<!-- AVG Speed -->
-				<div class="d-flex flex-row gap-2 align-items-center py-2 px-3 bg-2 rounded card-hover">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
 					<img src="{% static 'img/speed.svg' %}" width="40px" height="40px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">AVG. Speed</h5>
@@ -44,7 +44,7 @@
 				</div>
 				
 				<!-- AVG Accuracy -->
-				<div class="d-flex flex-row gap-2 align-items-center py-2 px-3 bg-2 rounded card-hover">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
 					<img src="{% static 'img/accuracy.svg' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">AVG. Accuracy</h5>
@@ -53,7 +53,7 @@
 				</div>
 				
 				<!-- Typing Time -->
-				<div class="d-flex flex-row gap-2 align-items-center py-2 px-3 bg-2 rounded card-hover">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
 					<img src="{% static 'img/typing_time.svg' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">Typing Time</h5>
@@ -61,7 +61,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-2 d-flex flex-column gap-3 justify-content-center bg-2 rounded card-hover">
+			<div class="col-2 card d-flex flex-column gap-3 justify-content-center">
 				<h3 class="text-center">Practice</h3>
 				<a href="#" class="btn btn-primary w-100">Lessons</a>
 				<a href="{% url 'timedtests' %}" class="btn btn-primary w-100">Timed Tests</a>
