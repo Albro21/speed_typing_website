@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="csrf-token" content="{{ csrf_token }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>{% block title %}SpeedTyping{% endblock title %}</title>
+	<!-- Bootstrap styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<!-- Bootstrap icons -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+	<!-- Custom styles -->
 	<link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
 	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block styles %}{% endblock styles %}    
@@ -20,8 +24,7 @@
 			<div class="collapse navbar-collapse" id="navbar">
 				<div class="navbar-nav mx-auto">
 					<a class="nav-link active" href="{% url 'index' %}">Home</a>
-					<a class="nav-link" href="{% url 'timedtests' %}">Timed Tests</a>
-					<a class="nav-link" href="{% url 'pagetests' %}">Page Tests</a>
+					<a class="nav-link" href="{% url 'practice' %}">Practice</a>
 					<a class="nav-link" href="#">Achievements</a>
 					<a class="nav-link" href="#">Profile</a>
 				</div>

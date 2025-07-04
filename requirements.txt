@@ -1,0 +1,2 @@
+Django==5.2.4
+wonderwords==2.2.0

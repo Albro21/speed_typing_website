@@ -1,38 +1,41 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block styles %} 
-	<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% block styles %}
 {% endblock styles %}
 
 {% block content %}
-	<div class="d-flex flex-column gap-3 my-4">
+	<div class="d-flex flex-column gap-4 my-4">
 
-		<div class="row gap-3 m-0">
+		<div class="row m-0">
 			<!-- Level card -->
-			<div class="col-3 card d-flex flex-column p-3" id="level-card">
-				<h2 class="mb-1">{{ request.user.level.title }}</h2>
-				<p class="mb-1">{{ request.user.level.description }}</p>
-				<div class="d-flex flex-column">
-					<div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="{{ request.user.exp }}" aria-valuemin="0" aria-valuemax="{{ request.user.level.exp_to_next }}" style="height: 25px">
-						<div class="progress-bar" style="width: {{ request.user.exp_progress }}%"></div>
-					</div>
-					<div style="white-space: nowrap">
-						{{ request.user.exp }} exp / {{ request.user.level.exp_to_next }} exp
+			<div class="col-3">
+				<div class="card d-flex flex-column p-3">
+					<h2 class="mb-1">{{ request.user.level.title }}</h2>
+					<p class="mb-1">{{ request.user.level.description }}</p>
+					<div class="d-flex flex-column">
+						<div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="{{ request.user.exp }}" aria-valuemin="0" aria-valuemax="{{ request.user.level.exp_to_next }}" style="height: 25px">
+							<div class="progress-bar" style="width: {{ request.user.exp_progress }}%"></div>
+						</div>
+						<div style="white-space: nowrap">
+							{{ request.user.exp }} exp / {{ request.user.level.exp_to_next }} exp
+						</div>
 					</div>
 				</div>
 			</div>
 
 			<!-- Daily Goal -->
-			<div class="col-2 card d-flex flex-column gap-2 justify-content-center py-2 px-3">
-				<h2 class="text-center">Daily Goal</h3>
-				<h3 class="text-center">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
+			<div class="col-3">
+				<div class="card d-flex flex-column gap-2 justify-content-center py-2 px-3 h-100">
+					<h2 class="text-center">Daily Goal</h3>
+					<h3 class="text-center">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
+				</div>
 			</div>
 		</div>
 
 		<!-- Stats cards -->
-		<div class="row gap-3 m-0">
-			<div class="col-3 d-flex flex-column gap-3 p-0">
+		<div class="row m-0">
+			<div class="col-3 d-flex flex-column gap-3">
 				
 				<!-- AVG Speed -->
 				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
@@ -60,13 +63,29 @@
 						<h6 class="m-0">{{ request.user.total_time_formatted }}</h6>
 					</div>
 				</div>
+				
+				<!-- Typing Time -->
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
+					<img src="{% static 'img/typing_time.svg' %}" width="50px" height="50px">
+					<div class="d-flex flex-column">
+						<h5 class="m-0">Typing Time</h5>
+						<h6 class="m-0">{{ request.user.total_time_formatted }}</h6>
+					</div>
+				</div>
 			</div>
-			<div class="col-2 card d-flex flex-column gap-3 justify-content-center">
-				<h3 class="text-center">Practice</h3>
-				<a href="#" class="btn btn-primary w-100">Lessons</a>
-				<a href="{% url 'timedtests' %}" class="btn btn-primary w-100">Timed Tests</a>
-				<a href="{% url 'pagetests' %}" class="btn btn-primary w-100">Page Tests</a>
+			<div class="col-9">
+				<div class="card p-3" style="height: 311px !important;">
+					<canvas id="history" style="width: 100% !important; height: 311px !important; display: block;"></canvas>
+				</div>
 			</div>
 		</div>
 	</div>
 {% endblock content %}
+
+{% block scripts %}
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartData = {{ chart_data|default:"null"|safe }};
+    </script>
+    <script src="{% static 'js/index.js' %}"></script>
+{% endblock scripts %}

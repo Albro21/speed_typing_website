@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Practice{% endblock title %}
+
+
+{% block styles %}
+<style>
+    .option.fw-bold,
+    .extra-option.fw-bold {
+        text-decoration: underline;
+    }
+</style>
+{% endblock styles %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-6">
+                <div class="card p-3 d-flex flex-column gap-3">
+
+                    <div class="d-flex flex-column" id="test-type">
+                        <p class="small mb-1">Choose a test type</p>
+                        <div class="btn-group d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-secondary option" data-group="test_type" data-value="timed">Timed Test</button>
+                            <button type="button" class="btn btn-secondary option" data-group="test_type" data-value="fixed">Fixed-Length Test</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column" id="text-type">
+                        <p class="small mb-1">Choose a text type</p>
+                        <div class="btn-group d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-secondary option" data-group="text_type" data-value="story">Story</button>
+                            <button type="button" class="btn btn-secondary option" data-group="text_type" data-value="article">Article</button>
+                            <button type="button" class="btn btn-secondary option" data-group="text_type" data-value="random">Random words</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column" id="time-options">
+                        <p class="small mb-1">Set the test duration</p>
+                        <div class="btn-group d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-secondary option" data-group="duration" data-value="30">30s</button>
+                            <button type="button" class="btn btn-secondary option" data-group="duration" data-value="60">1m</button>
+                            <button type="button" class="btn btn-secondary option" data-group="duration" data-value="180">3m</button>
+                            <button type="button" class="btn btn-secondary option" data-group="duration" data-value="300">5m</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column" id="length-options">
+                        <p class="small mb-1">Set the length of the text</p>
+                        <div class="btn-group d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-secondary option" data-group="length" data-value="short">Short</button>
+                            <button type="button" class="btn btn-secondary option" data-group="length" data-value="medium">Medium</button>
+                            <button type="button" class="btn btn-secondary option" data-group="length" data-value="long">Long</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column" id="word-count-options">
+                        <p class="small mb-1">Set the word count for the text</p>
+                        <div class="btn-group d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-secondary option" data-group="word_count" data-value="25">25 words</button>
+                            <button type="button" class="btn btn-secondary option" data-group="word_count" data-value="50">50 words</button>
+                            <button type="button" class="btn btn-secondary option" data-group="word_count" data-value="100">100 words</button>
+                            <button type="button" class="btn btn-secondary option" data-group="word_count" data-value="300">300 words</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column" id="difficulty-options">
+                        <p class="small mb-1">Set the difficulty level</p>
+                        <div class="btn-group d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-secondary option" data-group="difficulty" data-value="easy">Easy</button>
+                            <button type="button" class="btn btn-secondary option" data-group="difficulty" data-value="medium">Medium</button>
+                            <button type="button" class="btn btn-secondary option" data-group="difficulty" data-value="hard">Hard</button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex flex-column" id="extras">
+                        <p class="small mb-1">Choose extra options</p>
+                        <div class="d-flex justify gap-3">
+                            <button type="button" class="btn btn-secondary extra-option w-100" data-value="numbers">
+                                <i class="bi bi-plus-square me-2"></i>More numbers
+                            </button>
+                            <button type="button" class="btn btn-secondary extra-option w-100" data-value="punctuation">
+                                <i class="bi bi-plus-square me-2"></i>More punctuation
+                            </button>
+                            <button type="button" class="btn btn-secondary extra-option w-100" data-value="capitals">
+                                <i class="bi bi-plus-square me-2"></i>More capital letters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <a href="" id="start-button" class="btn btn-primary w-100">Start Practicing</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content%}
+
+{% block scripts %}
+<script src="{% static 'js/practice.js' %}"></script>
+{% endblock scripts %}

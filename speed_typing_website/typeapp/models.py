@@ -2,36 +2,62 @@ from django.db import models
 from django.utils.timezone import now
 
 
-class Story(models.Model):
+LENGTH_CHOICES = [
+    ('short', 'Short'),
+    ('medium', 'Medium'),
+    ('long', 'Long'),
+]
+
+DIFFICULTY_CHOICES = [
+    ('easy', 'Easy'),
+    ('medium', 'Medium'),
+    ('hard', 'Hard'),
+]
+
+TEST_TYPE_CHOICES = [
+    ('timed', 'Timed'),
+    ('fixed', 'Fixed-Length'),
+]
+
+class TextBase(models.Model):
     title = models.CharField(max_length=200)
     text = models.TextField()
-    
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, default='easy')
+    length = models.CharField(max_length=10, choices=LENGTH_CHOICES, default='medium')
+
     class Meta:
-        verbose_name_plural = "stories"
-    
+        abstract = True
+
     @property
     def word_count(self):
         return len(self.text.split())
-    
+
     @property
     def character_count(self):
         return len(self.text)
-    
+
     def __str__(self):
         return self.title
 
-  
-class TypingTestResult(models.Model):
-    TEST_TYPE_CHOICES = [
-        ('timed', 'Timed'),
-        ('page', 'Page'),
-        # ('quote', 'Quote'),
-    ]
 
+class Story(TextBase):
+    class Meta:
+        verbose_name_plural = "stories"
+
+
+class Article(TextBase):
+    class Meta:
+        verbose_name_plural = "articles"
+
+
+class TypingTestResult(models.Model):
     user = models.ForeignKey("users.CustomUser", on_delete=models.CASCADE, related_name='typing_results', blank=True, null=True)
-    test_type = models.CharField(max_length=10, choices=TEST_TYPE_CHOICES, blank=True, null=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='test_results', blank=True, null=True)
-    
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='test_results', blank=True, null=True)
+    test_type = models.CharField(max_length=10, choices=TEST_TYPE_CHOICES, blank=True, null=True)
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, blank=True, null=True)
+    length = models.CharField(max_length=10, choices=LENGTH_CHOICES, blank=True, null=True)
+
     wpm = models.FloatField(help_text="Words per minute", blank=True, null=True)
     duration = models.PositiveIntegerField(help_text="Duration in seconds", blank=True, null=True)
     accuracy = models.FloatField(help_text="Accuracy in percentage", blank=True, null=True)
@@ -56,4 +82,11 @@ class TypingTestResult(models.Model):
         verbose_name_plural = 'Typing Test Results'
 
     def __str__(self):
-        return f"{self.test_type.capitalize()} | {self.user.username} | {self.story.title} | {self.wpm:.1f} WPM | {self.accuracy:.1f}%"
+        user_str = self.user.username if self.user else "Anonymous"
+        if self.story:
+            title = self.story.title
+        elif self.article:
+            title = self.article.title
+        else:
+            title = "Random Words"
+        return f"{self.test_type.capitalize()} | {title} | {user_str} | {self.wpm:.1f} WPM | {self.accuracy:.1f}%"
