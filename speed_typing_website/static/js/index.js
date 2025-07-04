@@ -1,90 +1,158 @@
-if (chartData) {
-    const ctx = document.getElementById('history').getContext('2d');
-    new Chart(ctx, {
+if (historyChartData) {
+    const historyctx = document.getElementById('history').getContext('2d');
+    const HistoryChart = new Chart(historyctx, {
         type: 'line',
         data: {
-            labels: chartData.labels,
+            labels: historyChartData.labels,
             datasets: [
                 {
-                    label: 'WPM',
-                    data: chartData.wpm_data,
-                    borderColor: 'rgb(54, 162, 235)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.3)',
-                    fill: true,
-                    tension: 0.4,
-                    yAxisID: 'yWPM'
-                },
-                {
                     label: 'Accuracy (%)',
-                    data: chartData.accuracy_data,
+                    data: historyChartData.accuracy_data,
                     borderColor: 'rgb(190, 50, 50)',
+                    borderDash: [5, 5],
                     fill: false,
                     tension: 0.4,
-                    yAxisID: 'yAccuracy'
+                    yAxisID: 'yAccuracy',
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                    clip: false
+                },
+                {
+                    label: 'WPM',
+                    data: historyChartData.wpm_data,
+                    borderColor: '#FFFFFF',
+                    backgroundColor: '#212121',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'yWPM',
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                    clip: false
                 }
             ]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: 0
+            },
             scales: {
-                x: {
-                    ticks: {
-                        color: 'white',
-                    },
-                    grid: {
-                        color: '#555',
-                    }
-                },
-                yWPM: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Words per Minute',
-                        color: 'white',
-                    },
-                    ticks: {
-                        color: 'white',
-                        beginAtZero: true,
-                    },
-                    grid: {
-                        color: '#555',
-                    }
-                },
                 yAccuracy: {
                     type: 'linear',
                     position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Accuracy (%)',
-                        color: 'white',
+                    display: true,
+                    min: 0,
+                    max: 105,
+                    grid: {
+                        display: false,
+                        drawTicks: false
                     },
                     ticks: {
-                        color: 'white',
-                        min: 0,
-                        max: 100,
-                        beginAtZero: true,
+                        display: false
                     },
-                    grid: {
-                        color: '#555',
-                        drawOnChartArea: false,
-                    },
-                    min: 0,
-                    max: 100
+                    title: {
+                        display: false
+                    }
+                },
+                x: {
+                    display: false,
+                    grid: { display: false },
+                    offset: false
+                },
+                yWPM: {
+                    display: false,
+                    grid: { display: false },
+                    offset: false,
+                    min: 0
                 }
             },
             plugins: {
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                },
-                legend: {
-                    position: 'top',
-                    labels: {
-                        color: 'white'
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                    labelColor: function(context) {
+                        if (context.dataset.label === 'Accuracy (%)') {
+                            return {
+                                borderColor: 'rgb(190, 50, 50)',
+                                backgroundColor: 'rgb(190, 50, 50)'
+                            };
+                        }
+                        return {
+                            borderColor: '#FFFFFF',
+                            backgroundColor: '#FFFFFF'
+                        };
                     }
+                }
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: 'white'
                 }
             }
         }
+        }
     });
 }
+
+if (mistakesChartData) {
+    const mistakesctx = document.getElementById('mistakes').getContext('2d');
+    const MistakesChart = new Chart(mistakesctx, {
+        type: 'pie',
+        data: {
+            labels: mistakesChartData.labels,
+            datasets: [{
+                data: mistakesChartData.data,
+                backgroundColor: [
+                    '#FFFFFF',
+                    '#E6E6E6',
+                    '#CCCCCC',
+                    '#B3B3B3',
+                    '#999999',
+                    '#808080',
+                    '#666666',
+                    '#4D4D4D',
+                    '#3A3A3A',
+                    '#333333'
+                ],
+                borderColor: '#161616',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: 'Mistakes by Letter'
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function (context) {
+                            const label = context[0].label;
+                            return label === ' ' ? '" "' : label;
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#222',
+                    formatter: function (value, context) {
+                        return context.chart.data.labels[context.dataIndex];
+                    },
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+MistakesChart.register(ChartDataLabels);

@@ -1,4 +1,5 @@
 # Standart Libs
+from collections import defaultdict
 import json
 
 # Django
@@ -14,24 +15,45 @@ from wonderwords import RandomWord
 from .models import Article, Story, TypingTestResult
 
 
-# Returns a dict with data for the chart
-def get_results_history(typing_results):
-    if typing_results:
-        labels = []
-        wpm_data = []
-        accuracy_data = []
-        
-        for result in typing_results:
-            labels.append(result.created_at.strftime('%d/%m/%y'))
-            wpm_data.append(result.wpm)
-            accuracy_data.append(result.accuracy)
-        
-        return {
-            "labels": labels,
-            "wpm_data": wpm_data,
-            "accuracy_data": accuracy_data
-        }
-    return None
+# Returns a dict with data for the history chart
+def get_history_chart_data(typing_results):
+    labels = []
+    wpm_data = []
+    accuracy_data = []
+
+    for result in typing_results:
+        if result.wpm == 0:
+            continue  # Skip results with 0 WPM
+
+        labels.append(result.created_at.strftime('%d/%m/%y %H:%M'))
+        wpm_data.append(result.wpm)
+        accuracy_data.append(result.accuracy)
+
+    return {
+        "labels": labels,
+        "wpm_data": wpm_data,
+        "accuracy_data": accuracy_data
+    }
+
+# Returns a dict with data for the mistakes chart
+def get_mistakes_chart_data(typing_results):
+    letter_mistake_totals = defaultdict(int)
+
+    for result in typing_results:
+        if result.mistyped_letters:
+            for letter, count in result.mistyped_letters.items():
+                if letter != ' ':
+                    letter_mistake_totals[letter] += count
+
+    sorted_mistakes = sorted(letter_mistake_totals.items(), key=lambda x: x[1], reverse=True)[:10]
+
+    labels = [item[0] for item in sorted_mistakes]
+    data = [item[1] for item in sorted_mistakes]
+
+    return {
+        "labels": labels,
+        "data": data
+    }
 
 # Formats daily goal from seconds to HH:MM:SS
 def format_daily_goal(seconds):
@@ -55,10 +77,12 @@ def format_total_time(seconds):
 def index(request):
     # Get typing results for the current user and format them for the chart
     typing_results = request.user.typing_results.order_by("created_at")
-    chart_data = get_results_history(typing_results)
+    history_chart_data = get_history_chart_data(typing_results)
+    mistakes_chart_data = get_mistakes_chart_data(typing_results)
     
     context = {
-        "chart_data": chart_data
+        "history_chart_data": history_chart_data,
+        "mistakes_chart_data": mistakes_chart_data,
     }
     return render(request, 'typeapp/index.html', context)
 

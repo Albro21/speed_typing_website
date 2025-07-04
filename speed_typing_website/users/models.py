@@ -73,6 +73,10 @@ class CustomUser(AbstractUser):
     def exp_progress(self):
         return round(self.exp / self.level.exp_to_next * 100)
 
+    @property
+    def test_count(self):
+        return self.typing_results.count()
+
     def add_exp(self, amount):
         self.exp += amount
         while self.level and self.exp >= self.level.exp_to_next:

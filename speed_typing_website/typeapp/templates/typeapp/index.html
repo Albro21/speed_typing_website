@@ -31,6 +31,13 @@
 					<h3 class="text-center">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
 				</div>
 			</div>
+
+			<!-- Achievements -->
+			<div class="col-6">
+				<div class="card d-flex h-100">
+
+				</div>
+			</div>
 		</div>
 
 		<!-- Stats cards -->
@@ -64,18 +71,25 @@
 					</div>
 				</div>
 				
-				<!-- Typing Time -->
+				<!-- Completed Tests -->
 				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
-					<img src="{% static 'img/typing_time.svg' %}" width="50px" height="50px">
+					<img src="{% static 'img/test.png' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
-						<h5 class="m-0">Typing Time</h5>
-						<h6 class="m-0">{{ request.user.total_time_formatted }}</h6>
+						<h5 class="m-0">Completed Tests</h5>
+						<h6 class="m-0">{{ request.user.test_count }}</h6>
 					</div>
 				</div>
 			</div>
 			<div class="col-9">
-				<div class="card p-3" style="height: 311px !important;">
+				<div class="card pt-2" style="height: 311px !important;">
 					<canvas id="history" style="width: 100% !important; height: 311px !important; display: block;"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="row m-0">
+			<div class="col-3">
+				<div class="card pb-3">
+					<canvas id="mistakes"></canvas>
 				</div>
 			</div>
 		</div>
@@ -84,8 +98,10 @@
 
 {% block scripts %}
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script>
-        const chartData = {{ chart_data|default:"null"|safe }};
+        const historyChartData = {{ history_chart_data|default:"null"|safe }};
+        const mistakesChartData = {{ mistakes_chart_data|default:"null"|safe }};
     </script>
     <script src="{% static 'js/index.js' %}"></script>
 {% endblock scripts %}
