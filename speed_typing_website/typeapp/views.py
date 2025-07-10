@@ -5,7 +5,7 @@ import json
 # Django
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_http_methods
 
 # Third-party
@@ -13,6 +13,7 @@ from wonderwords import RandomWord
 
 # Local
 from .models import Article, Story, TypingTestResult
+from users.models import Achievement
 
 
 # Returns a dict with data for the history chart
@@ -75,14 +76,15 @@ def format_total_time(seconds):
 
 @login_required
 def index(request):
-    # Get typing results for the current user and format them for the chart
     typing_results = request.user.typing_results.order_by("created_at")
     history_chart_data = get_history_chart_data(typing_results)
     mistakes_chart_data = get_mistakes_chart_data(typing_results)
-    
+    achievements = Achievement.objects.filter(userachievement__user=request.user).select_related('group').order_by('-level')
+
     context = {
         "history_chart_data": history_chart_data,
         "mistakes_chart_data": mistakes_chart_data,
+        "achievements": achievements,
     }
     return render(request, 'typeapp/index.html', context)
 
@@ -225,5 +227,13 @@ def create_result(request):
 
 @login_required
 def result_detail(request, result_id):
-    result = TypingTestResult.objects.get(id=result_id)
-    return render(request, 'typeapp/result_detail.html', {'result': result})
+    user = request.user
+    result = get_object_or_404(TypingTestResult, id=result_id, user=user)
+    unlocked_achievements = user.check_achievements(recent_result=result)
+
+    context = {
+        'result': result,
+        'unlocked_achievements': unlocked_achievements,
+    }
+
+    return render(request, 'typeapp/result_detail.html', context)

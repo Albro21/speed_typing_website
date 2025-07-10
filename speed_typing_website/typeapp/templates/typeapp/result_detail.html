@@ -33,6 +33,36 @@
             </div>
         </div>
     </div>
+
+    {% if unlocked_achievements %}
+        <!-- Toast container -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080; max-width: 320px;">
+            {% for achievement in unlocked_achievements %}
+                <div class="toast rounded mb-3" style="width: 150px;" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="10000">
+                    <div class="toast-body p-0 d-flex flex-column align-items-center">
+                        {% if achievement.icon %}
+                            <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" class="w-100 p-1">
+                        {% endif %}
+                        <div class="p-1 text-center text-wrap text-break w-100">
+                            <h6 class="mb-1">{{ achievement.name }}</h6>
+                            <small>{{ achievement.description }}</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white position-absolute m-2" style="top: 1rem; right: 1rem;" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const toastElList = [].slice.call(document.querySelectorAll('.toast'))
+                toastElList.forEach(function (toastEl) {
+                new bootstrap.Toast(toastEl).show()
+                })
+            });
+        </script>
+    {% endif %}
+
 {% endblock content%}
     
 {% block scripts %}

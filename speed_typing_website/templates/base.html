@@ -18,7 +18,7 @@
 <body>
 
 	<!-- Navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark surface">
+    <nav class="navbar navbar-expand-md navbar-dark">
 		<div class="container-md">
 			<a class="navbar-brand m-0" href="{% url 'index' %}">SpeedTyping</a>
 			<div class="collapse navbar-collapse" id="navbar">
@@ -36,7 +36,7 @@
 	</nav>
 
 	<!-- Content -->
-	<div class="container-md text-white">
+	<div class="container-md text-white" id="main-content">
         {% block content %}{% endblock content %}
 	</div>
 

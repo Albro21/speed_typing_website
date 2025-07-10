@@ -71,3 +71,9 @@ a, a:hover, a:focus {
     color: var(--secondary-foreground);
     border-color: var(--border);
 }
+
+.toast {
+    background-color: var(--surface);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+}

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from .models import Level
+from .models import Level, AchievementGroup, Achievement, UserAchievement
 
 CustomUser = get_user_model()
 
@@ -24,4 +24,7 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(Level)
+admin.site.register(AchievementGroup)
+admin.site.register(Achievement)
+admin.site.register(UserAchievement)
 admin.site.register(CustomUser, CustomUserAdmin)

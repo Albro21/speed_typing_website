@@ -2,14 +2,27 @@
 {% load static %}
 
 {% block styles %}
+	<style>
+		body {
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+		#main-content {
+			flex-grow: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+	</style>
 {% endblock styles %}
 
 {% block content %}
-	<div class="d-flex flex-column gap-4 my-4">
+	<div class="d-flex flex-column gap-3 mt-2">
 
 		<div class="row m-0">
 			<!-- Level card -->
-			<div class="col-3">
+			<div class="col-3 px-2">
 				<div class="card d-flex flex-column p-3">
 					<h2 class="mb-1">{{ request.user.level.title }}</h2>
 					<p class="mb-1">{{ request.user.level.description }}</p>
@@ -25,71 +38,82 @@
 			</div>
 
 			<!-- Daily Goal -->
-			<div class="col-3">
-				<div class="card d-flex flex-column gap-2 justify-content-center py-2 px-3 h-100">
-					<h2 class="text-center">Daily Goal</h3>
-					<h3 class="text-center">{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
+			<div class="col-2 px-2">
+				<div class="card d-flex flex-column justify-content-center align-items-center h-100">
+					<h3>Daily Goal</h3>
+					<h4>{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
 				</div>
 			</div>
 
 			<!-- Achievements -->
-			<div class="col-6">
-				<div class="card d-flex h-100">
-
+			<div class="col-7 px-2">
+				<div class="card d-flex" style="height: 150px;">
+					<div class="d-flex flex-row overflow-auto p-2 gap-2">
+						{% for achievement in achievements %}
+							<img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" class="h-100" style="aspect-ratio: 1 / 1; object-fit: cover;">
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<!-- Stats cards -->
+		<!-- Charts -->
 		<div class="row m-0">
-			<div class="col-3 d-flex flex-column gap-3">
-				
-				<!-- AVG Speed -->
-				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
+			<div class="col-3 px-2">
+				<div class="card pb-2" style="height: 314px !important;">
+					<canvas id="mistakes"></canvas>
+				</div>
+			</div>
+			<div class="col-9 px-2">
+				<div class="card pt-2" style="height: 314px !important;">
+					<canvas id="history"></canvas>
+				</div>
+			</div>
+		</div>
+
+		<!-- Statistics -->
+		<div class="row mx-0 mb-4">
+			<!-- AVG Speed -->
+			<div class="col px-2">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/speed.svg' %}" width="40px" height="40px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">AVG. Speed</h5>
 						<h6 class="m-0">{{ request.user.avg_wpm }} WPM</h6>
 					</div>
 				</div>
-				
-				<!-- AVG Accuracy -->
-				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
+			</div>
+			
+			<!-- AVG Accuracy -->
+			<div class="col px-2">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/accuracy.svg' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">AVG. Accuracy</h5>
 						<h6 class="m-0">{{ request.user.avg_accuracy }}%</h6>
 					</div>
 				</div>
-				
-				<!-- Typing Time -->
-				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
+			</div>
+			
+			<!-- Typing Time -->
+			<div class="col px-2">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/typing_time.svg' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">Typing Time</h5>
 						<h6 class="m-0">{{ request.user.total_time_formatted }}</h6>
 					</div>
 				</div>
-				
-				<!-- Completed Tests -->
-				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3">
+			</div>
+			
+			<!-- Completed Tests -->
+			<div class="col px-2">
+				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/test.png' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
 						<h5 class="m-0">Completed Tests</h5>
 						<h6 class="m-0">{{ request.user.test_count }}</h6>
 					</div>
-				</div>
-			</div>
-			<div class="col-9">
-				<div class="card pt-2" style="height: 311px !important;">
-					<canvas id="history" style="width: 100% !important; height: 311px !important; display: block;"></canvas>
-				</div>
-			</div>
-		</div>
-		<div class="row m-0">
-			<div class="col-3">
-				<div class="card pb-3">
-					<canvas id="mistakes"></canvas>
 				</div>
 			</div>
 		</div>

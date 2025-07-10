@@ -23,6 +23,6 @@
     border-color: #842029;
 }
 
-input[type="password"]::-webkit-reveal, input[type="password"]::-ms-reveal {
+input[type="password"]::-webkit-reveal, input[type="password"]::-ms-reveal, .toast button.btn-close {
     filter: invert(1);
 }

@@ -71,11 +71,57 @@ class CustomUser(AbstractUser):
 
     @property
     def exp_progress(self):
+        if not self.level or not self.level.exp_to_next:
+            return 0
         return round(self.exp / self.level.exp_to_next * 100)
 
     @property
     def test_count(self):
         return self.typing_results.count()
+    
+    def check_achievements(self, recent_result=None):
+        unlocked_ids = set(self.unlocked_achievements.values_list('achievement_id', flat=True))
+        newly_unlocked = []
+
+        for achievement in Achievement.objects.select_related('group').order_by('-level'):
+            if achievement.id in unlocked_ids:
+                continue
+
+            group_name = achievement.group.name
+            value = None
+
+            if group_name == AchievementGroupType.WPM and recent_result:
+                value = recent_result.wpm
+            elif group_name == AchievementGroupType.ACCURACY and recent_result:
+                value = recent_result.accuracy
+            elif group_name == AchievementGroupType.TEST_COUNT:
+                value = self.test_count
+            elif group_name == AchievementGroupType.TYPING_TIME:
+                value = self.total_time
+            elif group_name == AchievementGroupType.LEVEL:
+                value = self.level.level if self.level else 0
+
+            if value is not None and value >= achievement.requirement_value:
+                # Check if user already has a higher or equal level achievement in this group
+                current_highest = self.unlocked_achievements.filter(
+                    achievement__group=achievement.group
+                ).order_by('-achievement__level').first()
+
+                if current_highest and current_highest.achievement.level >= achievement.level:
+                    # User already has higher or equal achievement, skip
+                    continue
+
+                # Remove lower level achievements in this group
+                self.unlocked_achievements.filter(
+                    achievement__group=achievement.group,
+                    achievement__level__lt=achievement.level
+                ).delete()
+
+                # Unlock this achievement
+                UserAchievement.objects.create(user=self, achievement=achievement)
+                newly_unlocked.append(achievement)
+
+        return newly_unlocked
 
     def add_exp(self, amount):
         self.exp += amount
@@ -86,3 +132,47 @@ class CustomUser(AbstractUser):
             self.exp -= self.level.exp_to_next
             self.level = next_level
         self.save()
+
+
+class AchievementGroupType(models.TextChoices):
+    WPM = "WPM", "Words Per Minute"
+    TEST_COUNT = "TEST_COUNT", "Test Count"
+    TYPING_TIME = "TYPING_TIME", "Typing Time"
+    ACCURACY = "ACCURACY", "Accuracy"
+    LEVEL = "LEVEL", "Level"
+
+
+class AchievementGroup(models.Model):
+    name = models.CharField(max_length=50, unique=True, choices=AchievementGroupType.choices)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.get_name_display()
+
+
+class Achievement(models.Model):
+    group = models.ForeignKey(AchievementGroup, on_delete=models.CASCADE, related_name='achievements')
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    requirement_value = models.FloatField()
+    level = models.IntegerField(default=1)
+    icon = models.ImageField(upload_to="achievements/", blank=True, null=True)
+
+    class Meta:
+        unique_together = ('group', 'requirement_value')
+        ordering = ['group__name', 'level']
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class UserAchievement(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='unlocked_achievements')
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    unlocked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'achievement')
+
+    def __str__(self):
+        return f"{self.user.email} unlocked {self.achievement.name}"

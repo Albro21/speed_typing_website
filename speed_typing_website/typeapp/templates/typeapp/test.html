@@ -3,15 +3,24 @@
 {% block title %}{{ duration }} Minute Test{% endblock title %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/timedtest.css' %}">
+    <style>
+        #userInput {
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            opacity: 0; 
+            width: 0; 
+            height: 0; 
+            z-index: 0;
+        }
+    </style>
 {% endblock styles %}
 
 {% block content %}
-    <h1 class="mt-5">{{ story.title }}</h1>
     <div class="row mt-5 justify-content-center">
-        <h1 class="col">{% if test_type == 'timed' %}Time Left:{% else %}Time:{% endif %} <span id="timeLeft" class="text-success"></span></h1>
-        <h1 class="col"> WPM: <span id="wpm" class="text-success"></span></h1>
-        <h1 class="col"> Accuracy: <span id="accuracy" class="text-success"></span></h1>
+        <h2 class="col">{% if test_type == 'timed' %}Time Left:{% else %}Time:{% endif %} <span id="timeLeft" class="text-success"></span></h1>
+        <h2 class="col"> WPM: <span id="wpm" class="text-success"></span></h1>
+        <h2 class="col"> Accuracy: <span id="accuracy" class="text-success"></span></h1>
     </div>
 
     <div id="story" data-text="{{ text_to_display }}"></div>
