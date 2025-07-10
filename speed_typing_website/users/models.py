@@ -1,7 +1,13 @@
+# Standart Libs
 from datetime import date
+import math
+
+# Django
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+# Local
 from .managers import CustomUserManager
 
 
@@ -68,6 +74,16 @@ class CustomUser(AbstractUser):
     def today_total_time_formatted(self):
         minutes, secs = divmod(self.today_total_time, 60)
         return f"{minutes}:{secs:02d}"
+
+    @property
+    def daily_goal_progress(self):
+        CIRCUMFERENCE = 2 * math.pi * 54
+        if self.daily_goal == 0:
+            return CIRCUMFERENCE
+        progress = self.today_total_time / (self.daily_goal * 60)
+        progress = min(progress, 1)
+        return CIRCUMFERENCE * (1 - progress)  # dashoffset length
+
 
     @property
     def exp_progress(self):

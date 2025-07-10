@@ -14,6 +14,18 @@
 			flex-direction: column;
 			justify-content: center;
 		}
+		.progress-circle {
+			transform: rotate(0deg);
+		}
+
+		.progress-bg {
+			stroke: var(--secondary);
+		}
+
+		.progress-bar {
+			transition: stroke-dashoffset 0.7s ease;
+			stroke: var(--primary);
+		}
 	</style>
 {% endblock styles %}
 
@@ -37,22 +49,65 @@
 				</div>
 			</div>
 
-			<!-- Daily Goal -->
-			<div class="col-2 px-2">
-				<div class="card d-flex flex-column justify-content-center align-items-center h-100">
-					<h3>Daily Goal</h3>
-					<h4>{{ request.user.today_total_time_formatted }} / {{ request.user.get_daily_goal_display }}</h3>
-				</div>
-			</div>
-
-			<!-- Achievements -->
-			<div class="col-7 px-2">
-				<div class="card d-flex" style="height: 150px;">
-					<div class="d-flex flex-row overflow-auto p-2 gap-2">
-						{% for achievement in achievements %}
-							<img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" class="h-100" style="aspect-ratio: 1 / 1; object-fit: cover;">
-						{% endfor %}
+			<div class="col-9 px-2 d-flex gap-3">
+				
+				<!-- Daily Goal -->
+				<div class="card d-flex flex-column justify-content-center align-items-center h-100 p-3" id="daily-goal">
+					<i class="bi bi-gear gear-icon position-absolute fs-5 pointer" id="dailyGoalPopover" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-html="true" title="Daily Goal" data-bs-content=""></i>
+					<div id="popover-daily-goal" class="d-none">
+						<form method="post" id="daily-goal-form" class="d-flex align-items-center gap-2 flex-nowrap custom-popover-form">
+							{% csrf_token %}
+							<label class="form-label mb-0">I want to practice for</label>
+							<select name="daily_goal" class="form-select form-select-sm w-auto">
+								{% for value, label in request.user.DAILY_GOAL_CHOICES %}
+									<option value="{{ value }}" {% if request.user.daily_goal == value %}selected{% endif %}>{{ label|slice:":-3" }}</option>
+								{% endfor %}
+							</select>
+							<span class="text-nowrap">minutes a day.</span>
+						</form>
 					</div>
+					
+					<svg class="progress-circle" width="120" height="120" viewBox="0 0 120 120">
+						<circle
+							class="progress-bg"
+							cx="60" cy="60" r="54"
+							stroke-width="12"
+							fill="none"
+							stroke="#262626"
+						/>
+						<circle
+							class="progress-bar"
+							cx="60" cy="60" r="54"
+							stroke-width="12"
+							fill="none"
+							stroke="#e5e5e5"
+							stroke-linecap="round"
+							stroke-dasharray="339.292"
+							stroke-dashoffset="{{ request.user.daily_goal_progress }}"
+							transform="rotate(-90 60 60)"
+						/>
+						<text
+							x="60" y="60"
+							text-anchor="middle"
+							fill="var(--foreground)"
+							font-size="26"
+							font-family="Arial, sans-serif"
+						>{{ request.user.today_total_time_formatted }}</text>
+						<text
+							x="60" y="80"
+							text-anchor="middle"
+							fill="var(--secondary-foreground)"
+							font-size="14"
+							font-family="Arial, sans-serif"
+						>/ {{ request.user.get_daily_goal_display }}</text>
+					</svg>
+				</div>
+	
+				<!-- Achievements -->
+				<div class="card d-flex flex-row overflow-auto gap-2 flex-grow-1 align-items-center p-3">
+					{% for achievement in achievements %}
+						<img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" style="height: 120px; aspect-ratio: 1 / 1; object-fit: cover;">
+					{% endfor %}
 				</div>
 			</div>
 		</div>

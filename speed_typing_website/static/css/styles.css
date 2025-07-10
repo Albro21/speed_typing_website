@@ -14,6 +14,10 @@ body {
     border-color: var(--border);
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 input.form-control,
 textarea.form-control,
 select.form-control {
@@ -76,4 +80,43 @@ a, a:hover, a:focus {
     background-color: var(--surface);
     color: var(--foreground);
     border: 1px solid var(--border);
+}
+
+.popover, .popover-header, .popover-body {
+    background-color: var(--surface);
+    color: var(--foreground);
+    border-color: var(--border);
+}
+
+.popover {
+    min-width: 300px;
+    max-width: none;
+}
+
+/* Hide scrollbar - Webkit browsers */
+.card.overflow-auto::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar - Firefox */
+.card.overflow-auto {
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+
+/* Optional: for IE and Edge */
+.card.overflow-auto {
+    -ms-overflow-style: none;
+}
+
+.gear-icon {
+    opacity: 0;
+    top: 0.5rem; 
+    right: 0.5rem; 
+    line-height: 1;
+    transition: opacity 0.3s ease;
+}
+
+#daily-goal:hover .gear-icon {
+    opacity: 1;
 }

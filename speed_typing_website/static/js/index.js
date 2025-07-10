@@ -11,7 +11,7 @@ if (historyChartData) {
                     borderColor: 'rgb(190, 50, 50)',
                     borderDash: [5, 5],
                     fill: false,
-                    tension: 0.4,
+                    tension: 0.2,
                     yAxisID: 'yAccuracy',
                     pointRadius: 0,
                     pointHoverRadius: 0,
@@ -23,7 +23,7 @@ if (historyChartData) {
                     borderColor: '#FFFFFF',
                     backgroundColor: '#212121',
                     fill: true,
-                    tension: 0.4,
+                    tension: 0.2,
                     yAxisID: 'yWPM',
                     pointRadius: 0,
                     pointHoverRadius: 0,
@@ -155,4 +155,57 @@ if (mistakesChartData) {
     });
 }
 
-MistakesChart.register(ChartDataLabels);
+const scrollContainer = document.querySelector('.card.overflow-auto');
+scrollContainer.addEventListener('wheel', (evt) => {
+    if (evt.deltaY === 0) return;
+    evt.preventDefault();
+    scrollContainer.scrollLeft += evt.deltaY;
+}, { passive: false });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const popoverTrigger = document.getElementById('dailyGoalPopover');
+    const popoverContent = document.getElementById('popover-daily-goal').innerHTML;
+
+    const popover = new bootstrap.Popover(popoverTrigger, {
+        content: popoverContent,
+        html: true,
+        placement: 'right',
+        sanitize: false,
+        trigger: 'click',
+    });
+
+    popoverTrigger.addEventListener('shown.bs.popover', () => {
+        const popoverId = popoverTrigger.getAttribute('aria-describedby');
+        const popoverElement = document.getElementById(popoverId);
+
+        if (!popoverElement) {
+            return;
+        }
+
+        const dailyGoalForm = popoverElement.querySelector('#daily-goal-form');
+
+        if (!dailyGoalForm) {
+            return;
+        }
+
+        const dailyGoalSelect = dailyGoalForm.querySelector('select[name="daily_goal"]');
+
+        if (!dailyGoalSelect) {
+            return;
+        }
+
+        dailyGoalSelect.addEventListener('change', async (e) => {
+            const formData = new FormData(dailyGoalForm);
+            const formObj = Object.fromEntries(formData.entries());
+
+            const data = await sendRequest('/users/daily-goal/edit/', 'PATCH', JSON.stringify(formObj));
+
+            if (data.success) {
+                queueToast('Daily goal updated', 'success');
+                window.location.reload();
+            } else {
+                showToast(data.error || 'Failed to update daily goal', 'danger');
+            }
+        });
+    });
+});
