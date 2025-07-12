@@ -109,15 +109,16 @@ a, a:hover, a:focus {
     -ms-overflow-style: none;
 }
 
-.gear-icon {
+.corner-icon {
     opacity: 0;
+    position: absolute;
     top: 0.5rem; 
     right: 0.5rem; 
     line-height: 1;
     transition: opacity 0.3s ease;
 }
 
-#daily-goal:hover .gear-icon {
+.card:hover .corner-icon {
     opacity: 1;
 }
 

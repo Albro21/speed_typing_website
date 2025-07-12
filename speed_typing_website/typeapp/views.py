@@ -26,7 +26,7 @@ def get_history_chart_data(typing_results):
         if result.wpm == 0:
             continue  # Skip results with 0 WPM
 
-        labels.append(result.created_at.strftime('%d/%m/%y %H:%M'))
+        labels.append(result.created_at.isoformat())
         wpm_data.append(result.wpm)
         accuracy_data.append(result.accuracy)
 
