@@ -112,29 +112,15 @@
 			</div>
 		</div>
 
-		<!-- Charts -->
-		<div class="row m-0">
-			<div class="col-3 px-2">
-				<div class="card pb-2" style="height: 314px !important;">
-					<canvas id="mistakes"></canvas>
-				</div>
-			</div>
-			<div class="col-9 px-2">
-				<div class="card pt-2" style="height: 314px !important;">
-					<canvas id="history"></canvas>
-				</div>
-			</div>
-		</div>
-
 		<!-- Statistics -->
-		<div class="row mx-0 mb-4">
+		<div class="row mx-0">
 			<!-- AVG Speed -->
 			<div class="col px-2">
 				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/speed.svg' %}" width="40px" height="40px">
 					<div class="d-flex flex-column">
-						<h5 class="m-0">AVG. Speed</h5>
-						<h6 class="m-0">{{ request.user.avg_wpm }} WPM</h6>
+						<h6 class="m-0">AVG. Speed</h6>
+						<p class="m-0">{{ request.user.avg_wpm }} WPM</p>
 					</div>
 				</div>
 			</div>
@@ -144,8 +130,8 @@
 				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/accuracy.svg' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
-						<h5 class="m-0">AVG. Accuracy</h5>
-						<h6 class="m-0">{{ request.user.avg_accuracy }}%</h6>
+						<h6 class="m-0">AVG. Accuracy</h6>
+						<p class="m-0">{{ request.user.avg_accuracy }}%</p>
 					</div>
 				</div>
 			</div>
@@ -155,8 +141,8 @@
 				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/typing_time.svg' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
-						<h5 class="m-0">Typing Time</h5>
-						<h6 class="m-0">{{ request.user.total_time_formatted }}</h6>
+						<h6 class="m-0">Typing Time</h6>
+						<p class="m-0">{{ request.user.total_time_formatted }}</p>
 					</div>
 				</div>
 			</div>
@@ -166,9 +152,23 @@
 				<div class="card d-flex flex-row gap-2 align-items-center py-2 px-3 h-100">
 					<img src="{% static 'img/test.png' %}" width="50px" height="50px">
 					<div class="d-flex flex-column">
-						<h5 class="m-0">Completed Tests</h5>
-						<h6 class="m-0">{{ request.user.test_count }}</h6>
+						<h6 class="m-0">Completed Tests</h6>
+						<p class="m-0">{{ request.user.test_count }}</p>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Charts -->
+		<div class="row m-0 mb-4">
+			<div class="col-3 px-2">
+				<div class="card pb-2" style="height: 314px !important;">
+					<canvas id="mistakes"></canvas>
+				</div>
+			</div>
+			<div class="col-9 px-2">
+				<div class="card pt-2" style="height: 314px !important;">
+					<canvas id="history"></canvas>
 				</div>
 			</div>
 		</div>

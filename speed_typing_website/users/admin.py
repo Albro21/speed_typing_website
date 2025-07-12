@@ -7,12 +7,12 @@ CustomUser = get_user_model()
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('email', 'is_staff', 'is_active')
-    list_filter = ('email', 'is_staff', 'is_active')
+    list_display = ('nickname','email', 'is_staff', 'is_active')
+    list_filter = ('nickname', 'email', 'is_staff', 'is_active')
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('nickname', 'email', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Personal Info', {'fields': ('level', 'exp', 'daily_goal')}),
+        ('Personal Info', {'fields': ('profile_picture', 'level', 'exp', 'daily_goal')}),
     )
     add_fieldsets = (
         (None, {

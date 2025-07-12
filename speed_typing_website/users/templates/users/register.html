@@ -11,6 +11,18 @@
             {% csrf_token %}
 
             <div>
+                <label for="{{ form.nickname.id_for_label }}" class="form-label">{{ form.nickname.label }}</label>
+                <input type="nickname" name="{{ form.nickname.name }}" id="{{ form.nickname.id_for_label }}"
+                    class="form-control{% if form.nickname.errors %} is-invalid{% endif %}"
+                    value="{{ form.nickname.value|default_if_none:'' }}" required>
+                {% if form.nickname.errors %}
+                <div class="invalid-feedback">
+                    {{ form.nickname.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div>
                 <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
                 <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
                     class="form-control{% if form.email.errors %} is-invalid{% endif %}"

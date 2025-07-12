@@ -39,9 +39,15 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
 
+    nickname = models.CharField(max_length=30)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, blank=True)
     exp = models.IntegerField(default=0)
     daily_goal = models.IntegerField(choices=DAILY_GOAL_CHOICES, default=10)
+
+    def __str__(self):
+        return f"{self.nickname} ({self.email})"
 
     @property
     def avg_wpm(self):
@@ -83,7 +89,6 @@ class CustomUser(AbstractUser):
         progress = self.today_total_time / (self.daily_goal * 60)
         progress = min(progress, 1)
         return CIRCUMFERENCE * (1 - progress)  # dashoffset length
-
 
     @property
     def exp_progress(self):

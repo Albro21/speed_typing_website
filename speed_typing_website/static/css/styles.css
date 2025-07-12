@@ -120,3 +120,23 @@ a, a:hover, a:focus {
 #daily-goal:hover .gear-icon {
     opacity: 1;
 }
+
+.dropdown-menu {
+    background-color: var(--surface);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--foreground);
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: var(--secondary);
+    color: var(--foreground);
+}
+
+.dropdown-menu .dropdown-item.active {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+}

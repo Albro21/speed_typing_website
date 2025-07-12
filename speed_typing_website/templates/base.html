@@ -20,15 +20,31 @@
 	<!-- Navbar -->
     <nav class="navbar navbar-expand-md navbar-dark">
 		<div class="container-md">
+
+			<!-- Brand -->
 			<a class="navbar-brand m-0" href="{% url 'index' %}">SpeedTyping</a>
+
+			<!-- Main Navigation -->
 			<div class="collapse navbar-collapse" id="navbar">
 				<div class="navbar-nav mx-auto">
-					<a class="nav-link active" href="{% url 'index' %}">Home</a>
+					<a class="nav-link active" href="{% url 'index' %}">Dashboard</a>
 					<a class="nav-link" href="{% url 'practice' %}">Practice</a>
-					<a class="nav-link" href="#">Achievements</a>
-					<a class="nav-link" href="#">Profile</a>
 				</div>
 			</div>
+
+			<!-- Profile Section -->
+			<div class="dropdown text-end">
+				<div class="d-inline-flex align-items-center dropdown-toggle gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'placeholders/profile_picture.jpg' %}{% endif %}" alt="Profile Picture" class="rounded-circle" width="24" height="24">
+					<span>{{ user.nickname }}</span>
+				</div>
+				<div class="dropdown-menu p-0 text-center" style="left: 50%; transform: translateX(-50%);">
+					<a class="dropdown-item rounded-top" href="#"><i class="bi bi-person"></i> Profile</a>
+					<a class="dropdown-item rounded-bottom" href="#"><i class="bi bi-gear"></i> Settings</a>
+				</div>
+			</div>
+
+			<!-- Navbar toggler -->
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
