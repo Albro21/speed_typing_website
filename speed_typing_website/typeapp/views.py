@@ -46,7 +46,7 @@ def get_mistakes_chart_data(typing_results):
                 if letter != ' ':
                     letter_mistake_totals[letter] += count
 
-    sorted_mistakes = sorted(letter_mistake_totals.items(), key=lambda x: x[1], reverse=True)[:10]
+    sorted_mistakes = sorted(letter_mistake_totals.items(), key=lambda x: x[1], reverse=True)[:15]
 
     labels = [item[0] for item in sorted_mistakes]
     data = [item[1] for item in sorted_mistakes]

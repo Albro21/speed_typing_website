@@ -93,6 +93,11 @@ a, a:hover, a:focus {
     max-width: none;
 }
 
+.popover .popover-body {
+    border-radius: 7px;
+    border-color: var(--border);
+}
+
 /* Hide scrollbar - Webkit browsers */
 .card.overflow-auto::-webkit-scrollbar {
     display: none;

@@ -1,61 +1,3 @@
-if (mistakesChartData) {
-    const mistakesctx = document.getElementById('mistakes').getContext('2d');
-    const MistakesChart = new Chart(mistakesctx, {
-        type: 'pie',
-        data: {
-            labels: mistakesChartData.labels,
-            datasets: [{
-                data: mistakesChartData.data,
-                backgroundColor: [
-                    '#FFFFFF',
-                    '#E6E6E6',
-                    '#CCCCCC',
-                    '#B3B3B3',
-                    '#999999',
-                    '#808080',
-                    '#666666',
-                    '#4D4D4D',
-                    '#3A3A3A',
-                    '#333333'
-                ],
-                borderColor: '#161616',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                title: {
-                    display: true,
-                    text: 'Mistakes by Letter'
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function (context) {
-                            const label = context[0].label;
-                            return label === ' ' ? '" "' : label;
-                        }
-                    }
-                },
-                datalabels: {
-                    color: '#222',
-                    formatter: function (value, context) {
-                        return context.chart.data.labels[context.dataIndex];
-                    },
-                    font: {
-                        weight: 'bold',
-                        size: 14
-                    }
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-}
-
 const scrollContainer = document.querySelector('.card.overflow-auto');
 scrollContainer.addEventListener('wheel', (evt) => {
     if (evt.deltaY === 0) return;
@@ -306,4 +248,185 @@ function formatLabel(date) {
 		minute: '2-digit'
 	});
 }
+
+let MistakesChart = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('mistakes-chart-type');
+
+    const chartTypes = [
+        { icon: 'bi-pie-chart', type: 'pie' },
+        { icon: 'bi-claude', type: 'polarArea' }
+    ];
+
+    let savedType = localStorage.getItem('mistakesChartType');
+    let currentIndex = 0;
+
+    if (savedType) {
+        const foundIndex = chartTypes.findIndex(ct => ct.type === savedType);
+        if (foundIndex !== -1) {
+            currentIndex = foundIndex;
+        }
+    }
+
+    toggle.className = `bi fs-5 pointer ${chartTypes[currentIndex].icon}`;
+
+    // Load saved letter amount or default to 10
+    const savedAmount = parseInt(localStorage.getItem('mistakesLetterAmount')) || 10;
+
+    if (mistakesChartData) {
+        createMistakesChart(chartTypes[currentIndex].type, savedAmount);
+    }
+
+    toggle.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % chartTypes.length;
+        toggle.className = `bi fs-5 pointer ${chartTypes[currentIndex].icon}`;
+        localStorage.setItem('mistakesChartType', chartTypes[currentIndex].type);
+
+        const limit = parseInt(localStorage.getItem('mistakesLetterAmount')) || 10;
+        if (mistakesChartData) {
+            createMistakesChart(chartTypes[currentIndex].type, limit);
+        }
+    });
+
+    // Popover logic
+    const settingsIcon = document.getElementById('mistakes-chart-settings');
+    const popoverContent = document.getElementById('mistakes-chart-settings-popover').innerHTML;
+
+    const popover = new bootstrap.Popover(settingsIcon, {
+        content: popoverContent,
+        html: true,
+        placement: 'bottom',
+        sanitize: false,
+        trigger: 'manual'
+    });
+
+    let isPopoverVisible = false;
+
+    settingsIcon.addEventListener('click', () => {
+        if (isPopoverVisible) {
+            popover.hide();
+        } else {
+            popover.show();
+        }
+        isPopoverVisible = !isPopoverVisible;
+    });
+
+    document.addEventListener('click', (event) => {
+        const popoverId = settingsIcon.getAttribute('aria-describedby');
+        const popoverEl = document.getElementById(popoverId);
+
+        if (
+            isPopoverVisible &&
+            !settingsIcon.contains(event.target) &&
+            !(popoverEl && popoverEl.contains(event.target))
+        ) {
+            popover.hide();
+            isPopoverVisible = false;
+        }
+    });
+
+    // Handle input inside popover once shown
+    settingsIcon.addEventListener('shown.bs.popover', () => {
+        const popoverId = settingsIcon.getAttribute('aria-describedby');
+        const popoverElement = document.getElementById(popoverId);
+        const input = popoverElement.querySelector('#mistakes-letter-amount');
+
+        if (input) {
+            // Set value from localStorage
+            const saved = parseInt(localStorage.getItem('mistakesLetterAmount')) || 10;
+            input.value = saved;
+
+            input.addEventListener('input', () => {
+                const amount = parseInt(input.value, 10);
+                if (!isNaN(amount) && amount >= 5 && amount <= 15) {
+                    localStorage.setItem('mistakesLetterAmount', amount);
+                    createMistakesChart(chartTypes[currentIndex].type, amount);
+                }
+            });
+        }
+    });
+});
+
+function createMistakesChart(type, limit = 10) {
+    const ctx = document.getElementById('mistakes').getContext('2d');
+
+    if (MistakesChart) {
+        MistakesChart.destroy();
+    }
+
+    // Sort and take top 'limit' letters
+    const combined = mistakesChartData.labels.map((label, i) => ({
+        label,
+        value: mistakesChartData.data[i]
+    }));
+
+    combined.sort((a, b) => b.value - a.value);
+
+    const top = combined.slice(0, limit);
+
+    const chartLabels = top.map(e => e.label);
+    const chartData = top.map(e => e.value);
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Mistakes by Letter'
+            },
+            tooltip: {
+                callbacks: {
+                    title: function (context) {
+                        const label = context[0].label;
+                        return label === ' ' ? '" "' : label;
+                    }
+                }
+            },
+            datalabels: {
+                color: '#222',
+                formatter: function (value, context) {
+                    return context.chart.data.labels[context.dataIndex];
+                },
+                font: {
+                    weight: 'bold',
+                    size: 14
+                }
+            }
+        }
+    };
+
+    if (type === 'polarArea') {
+        options.scales = {
+            r: {
+                grid: { display: false },
+                ticks: { display: false },
+                pointLabels: {
+                    font: { weight: 'bold', size: 14 },
+                    color: '#222'
+                }
+            }
+        };
+    }
+
+    MistakesChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: [
+                    '#FFFFFF', '#E6E6E6', '#CCCCCC', '#B3B3B3', '#999999',
+                    '#808080', '#666666', '#4D4D4D', '#3A3A3A', '#333333'
+                ],
+                borderColor: '#161616',
+                borderWidth: 2
+            }]
+        },
+        options: options,
+        plugins: [ChartDataLabels]
+    });
+}
+
 

@@ -53,7 +53,7 @@
 				
 				<!-- Daily Goal -->
 				<div class="card d-flex flex-column justify-content-center align-items-center h-100 p-3" id="daily-goal">
-					<i class="bi bi-gear corner-icon fs-5 pointer" id="dailyGoalPopover" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-html="true" title="Daily Goal" data-bs-content=""></i>
+					<i class="bi bi-gear corner-icon fs-5 pointer" id="dailyGoalPopover" tabindex="0" data-bs-toggle="day-goal-popover" data-bs-trigger="focus" data-bs-html="true" title="Daily Goal"></i>
 					<div id="popover-daily-goal" class="d-none">
 						<form method="post" id="daily-goal-form" class="d-flex align-items-center gap-2 flex-nowrap custom-popover-form">
 							{% csrf_token %}
@@ -163,10 +163,16 @@
 		<div class="row m-0 mb-4">
 			<div class="col-3 px-2">
 				<div class="card pb-2" style="height: 314px !important;">
-					<!-- <div class="corner-icon d-flex gap-3">
+					<div class="corner-icon d-flex gap-3">
 						<i class="bi bi-pie-chart fs-5 pointer" id="mistakes-chart-type"></i>
-						<i class="bi bi-gear fs-5 pointer" id="mistakes-chart-settings"></i>
-					</div> -->
+						<i class="bi bi-gear fs-5 pointer" id="mistakes-chart-settings" tabindex="0" title="Settings" data-bs-toggle="popover" data-bs-trigger="manual" ></i>
+						<div id="mistakes-chart-settings-popover" class="d-none">
+							<div class="d-flex align-items-center gap-2">
+								<label for="mistakes-letter-amount" class="form-label m-0" style="white-space: nowrap;">Amount of letters to show</label>
+								<input type="number" id="mistakes-letter-amount" class="form-control form-control-sm" min="3" max="15" value="10">
+							</div>
+						</div>
+					</div>
 					<canvas id="mistakes"></canvas>
 				</div>
 			</div>
