@@ -237,3 +237,75 @@ def result_detail(request, result_id):
     }
 
     return render(request, 'typeapp/result_detail.html', context)
+
+from django.utils.timezone import now, timedelta
+from django.db.models import Count, Avg, Sum, Max
+
+@require_http_methods(["GET"])
+@login_required
+def get_leaderboard(request):
+    metric = request.GET.get("metric", "wpm")
+    timeframe = request.GET.get("timeframe", "daily")
+
+    now_ = now()
+    if timeframe == "daily":
+        since = now_ - timedelta(days=1)
+    elif timeframe == "weekly":
+        since = now_ - timedelta(weeks=1)
+    elif timeframe == "monthly":
+        since = now_ - timedelta(days=30)
+    else:
+        since = None
+
+    queryset = TypingTestResult.objects.filter(user__isnull=False)
+    if since:
+        queryset = queryset.filter(created_at__gte=since)
+
+    if metric == "wpm":
+        # Step 1: Aggregate average WPM per user
+        aggregated = queryset.values("user__id", "user__nickname").annotate(
+            value=Avg("wpm"),
+            latest_test_id=Max("id")  # used to grab latest result for that user
+        ).order_by("-value")[:50]
+
+        # Step 2: Map latest accuracy and created_at using subquery
+        test_ids = [entry["latest_test_id"] for entry in aggregated]
+        latest_tests = TypingTestResult.objects.filter(id__in=test_ids).values("id", "accuracy", "created_at")
+
+        # Build lookup dict for enrichment
+        accuracy_lookup = {t["id"]: {"accuracy": t["accuracy"], "created_at": t["created_at"]} for t in latest_tests}
+
+        leaderboard = []
+        for entry in aggregated:
+            extra = accuracy_lookup.get(entry["latest_test_id"], {})
+            leaderboard.append({
+                "user_id": entry["user__id"],
+                "nickname": entry["user__nickname"],
+                "value": round(entry["value"], 2),
+                "accuracy": extra.get("accuracy"),
+                "created_at": extra.get("created_at"),
+            })
+
+    elif metric == "completed":
+        leaderboard = list(
+            queryset.values("user__id", "user__nickname")
+            .annotate(value=Count("id"))
+            .order_by("-value")[:50]
+        )
+
+    elif metric == "time":
+        leaderboard = list(
+            queryset.values("user__id", "user__nickname")
+            .annotate(value=Sum("duration"))
+            .order_by("-value")[:50]
+        )
+
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid metric"}, status=400)
+
+    return JsonResponse(leaderboard, safe=False)
+
+@require_http_methods(["GET"])
+@login_required
+def leaderboards(request):
+    return render(request, 'typeapp/leaderboards.html')
