@@ -7,13 +7,15 @@ CustomUser = get_user_model()
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('nickname','email', 'is_staff', 'is_active')
+    list_display = ('nickname', 'email', 'is_staff', 'is_active')
     list_filter = ('nickname', 'email', 'is_staff', 'is_active')
     fieldsets = (
         (None, {'fields': ('nickname', 'email', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
         ('Personal Info', {'fields': ('profile_picture', 'level', 'exp', 'daily_goal')}),
+        ('Important dates', {'fields': ('date_joined',)}),
     )
+    readonly_fields = ('date_joined',)
     add_fieldsets = (
         (None, {
             'classes': ('wide',),

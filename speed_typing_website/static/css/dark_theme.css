@@ -11,6 +11,7 @@
     --border: #434343;
     --border-focus: #636363;
     --box-shadow: 0 0 0 0.25rem rgba(99, 99, 99, 0.25);
+    --text-muted: #a1a1a1;
 }
 
 .html {
@@ -23,6 +24,6 @@
     border-color: #842029;
 }
 
-input[type="password"]::-webkit-reveal, input[type="password"]::-ms-reveal, .toast button.btn-close {
+input[type="password"]::-webkit-reveal, input[type="password"]::-ms-reveal, .toast button.btn-close, .modal-header .btn-close {
     filter: invert(1);
 }

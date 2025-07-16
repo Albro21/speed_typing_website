@@ -137,8 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await sendRequest(url, 'GET');
 
         if (!data || data.length === 0) {
-            leaderboardTitle.textContent = 'Leaderboard - No data';
-            leaderboardContainer.innerHTML = `<p class="text-danger">No leaderboard data available.</p>`;
+            const titleMap = {
+                wpm: 'Average WPM',
+                completed: 'Completed Tests',
+                time: 'Total Typing Time'
+            };
+            const title = titleMap[metric] || metric;
+            leaderboardTitle.textContent = `Leaderboard - ${title} (${timeframe.charAt(0).toUpperCase() + timeframe.slice(1)})`;
+            leaderboardContainer.innerHTML = `<p class="text-muted">No one has taken any tests during this period.</p>`;
             return;
         }
 

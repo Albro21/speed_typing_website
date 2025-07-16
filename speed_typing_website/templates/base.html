@@ -27,9 +27,10 @@
 			<!-- Main Navigation -->
 			<div class="collapse navbar-collapse" id="navbar">
 				<div class="navbar-nav mx-auto">
-					<a class="nav-link active" href="{% url 'index' %}">Dashboard</a>
-					<a class="nav-link" href="{% url 'practice' %}">Practice</a>
-					<a class="nav-link" href="{% url 'leaderboards' %}">Leaderboards</a>
+					<a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Dashboard</a>
+					<a class="nav-link {% if request.path == '/practice/' %}active{% endif %}" href="{% url 'practice' %}">Practice</a>
+					<a class="nav-link {% if request.path == '/leaderboards/' %}active{% endif %}" href="{% url 'leaderboards' %}">Leaderboards</a>
+					<a class="nav-link {% if request.path == '/users/profile/' %}active{% endif %}" href="{% url 'users:profile' %}">Profile</a>
 				</div>
 			</div>
 
@@ -40,7 +41,7 @@
 					<span>{{ user.nickname }}</span>
 				</div>
 				<div class="dropdown-menu p-0 text-center" style="left: 50%; transform: translateX(-50%);">
-					<a class="dropdown-item rounded-top" href="#"><i class="bi bi-person"></i> Profile</a>
+					<a class="dropdown-item rounded-top" href="{% url 'users:profile' %}"><i class="bi bi-person"></i> Profile</a>
 					<a class="dropdown-item rounded-bottom" href="{% url 'users:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a>
 				</div>
 			</div>

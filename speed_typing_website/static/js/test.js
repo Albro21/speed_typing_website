@@ -241,7 +241,7 @@ async function endTest() {
         parseFloat(((correctLettersCount / (correctLettersCount + incorrectLettersCount)) * 100).toFixed(2));
     const elapsedTime = (isNaN(parseInt(duration)) || parseInt(duration) === 0) ? Math.floor((Date.now() - startTime) / 1000) : parseInt(duration);
 
-    const requestBody = JSON.stringify({
+    const requestBody = {
         article_id: window.initialSettings.articleId || 0,
         story_id: window.initialSettings.storyId || 0,
         test_type: testType,
@@ -255,7 +255,7 @@ async function endTest() {
         mistyped_letters: sortedMistypedLetters,
         letter_timings: sortedLetterTimings,
         speed_curve: speedCurve,
-    });
+    };
 
     const data = await sendRequest(`/results/create/`, 'POST', requestBody);
     window.location.href = `/results/${data.result_id}/`;

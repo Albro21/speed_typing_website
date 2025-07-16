@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ user.nickname }}'s Profile{% endblock title %}
+
+{% block styles %}
+
+{% endblock styles %}
+
+{% block content %}
+    <div class="row mt-4 mb-5">
+        <div class="col-3 d-flex flex-column">
+            <div class="card d-flex flex-column p-3 gap-4">
+                <i class="bi bi-gear corner-icon fs-5 pointer opacity-100" id="settings" data-bs-toggle="modal" data-bs-target="#settingsModal"></i>
+                
+                <!-- User Settings Modal -->
+                <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content p-3">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title" id="settingsModalLabel">Profile Settings</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="settingsForm" enctype="multipart/form-data">
+                                <div class="modal-body text-center">
+                                    <!-- Profile Picture Upload -->
+                                    <label for="profilePictureInput" class="d-block">
+                                        <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" class="d-none">
+                                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'placeholders/profile_picture.jpg' %}{% endif %}" alt="Profile Picture" id="profilePicturePreview"
+                                        class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;">
+                                    </label>
+                                    <small class="text-muted">Click image to change</small>
+                                    <!-- Name Input -->
+                                    <div class="mt-4 text-start">
+                                        <label for="nickname" class="form-label">Nickname</label>
+                                        <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Enter your nickname" value="{{ user.nickname }}" required>
+                                    </div>
+                                    <!-- Bio Input -->
+                                    <div class="mt-3 text-start">
+                                        <label for="bio" class="form-label">Bio</label>
+                                        <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Write something about yourself">{{ user.bio|default_if_none:"" }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex flex-column gap-3">
+                    <!-- Profile Info -->
+                    <div class="d-flex gap-3 align-items-center">
+                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'placeholders/profile_picture.jpg' %}{% endif %}" alt="Profile Picture" class="rounded-circle" style="width: 100px; height: 100px;">
+                        <div class="d-flex flex-column">
+                            <h1 class="mb-0">{{ user.nickname }}</h1>
+                            <small>Joined: {{ user.date_joined|date:"d F Y" }}</small>
+                        </div>
+                    </div>
+    
+                    <!-- Level -->
+                    <div class="d-flex flex-column">
+                        <h5 class="mb-1">{{ request.user.level.title }}</h5>
+                        <div class="d-flex flex-column">
+                            <div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="{{ request.user.exp }}" aria-valuemin="0" aria-valuemax="{{ request.user.level.exp_to_next }}" style="height: 15px">
+                                <div class="progress-bar" style="width: {{ request.user.exp_progress }}%"></div>
+                            </div>
+                            <small style="white-space: nowrap">
+                                {{ request.user.exp }} exp / {{ request.user.level.exp_to_next }} exp
+                            </small>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Profile Stats -->
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex flex-column">
+                        <small>Tests Completed</small>
+                        <h3>{{ user.test_count }}</h3>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <small>Time Typing</small>
+                        <h3>{{ user.total_time_formatted }}</h3>
+                    </div>
+                </div>
+    
+                <!-- Bio -->
+                <div>
+                    <small>Bio</small>
+                    <p>{{ user.bio|default_if_none:"" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-9 d-flex flex-column gap-3">
+            <div class="card p-3">
+                <div class="row mx-0">
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        <small class="text-muted">30 seconds</small>
+                        <h3 class="m-0">{{ max_wpm_30s }} WPM</h3>
+                        <h5 class="m-0">{{ max_accuracy_30s }}</h5>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        <small class="text-muted">1 minute</small>
+                        <h3 class="m-0">{{ max_wpm_1m }} WPM</h3>
+                        <h5 class="m-0">{{ max_accuracy_1m }}</h5>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        <small class="text-muted">3 minutes</small>
+                        <h3 class="m-0">{{ max_wpm_3m }} WPM</h3>
+                        <h5 class="m-0">{{ max_accuracy_3m }}</h5>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        <small class="text-muted">5 minutes</small>
+                        <h3 class="m-0">{{ max_wpm_5m }} WPM</h3>
+                        <h5 class="m-0">{{ max_accuracy_5m }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="card d-flex flex-row overflow-auto gap-2 align-items-center p-3" style="height: auto;">
+                {% for achievement in achievements %}
+                    <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" style="height: 125px; aspect-ratio: 1 / 1; object-fit: cover;">
+                {% endfor %}
+            </div>
+
+            <div class="d-flex flex-column">
+                <h3 class="mb-0 text-center">Test history</h3>
+                <div class="row py-2 mx-0">
+                    <div class="col-2"><small class="text-muted">Date</small></div>
+                    <div class="col text-center"><small class="text-muted">Type</small></div>
+                    <div class="col text-center"><small class="text-muted">Difficulty</small></div>
+                    <div class="col text-center"><small class="text-muted">WPM</small></div>
+                    <div class="col text-center"><small class="text-muted">Accuracy</small></div>
+                    <div class="col text-center"><small class="text-muted">Time</small></div>
+                    <div class="col text-center"><small class="text-muted">Correct</small></div>
+                    <div class="col text-center"><small class="text-muted">Mistakes</small></div>
+                </div>
+                {% for test in user.typing_results.all|dictsortreversed:"created_at"|slice:":20" %}
+                    <div class="row py-2 mx-0 d-flex align-items-center {% if forloop.counter0|divisibleby:2 %}secondary-bg{% endif %}">
+                        <div class="col-2">{{ test.created_at|date:"d M Y" }}<br>{{ test.created_at|date:"H:i" }}</div>
+                        <div class="col text-center">{{ test.test_type|capfirst }}</div>
+                        <div class="col text-center">{{ test.difficulty|capfirst }}</div>
+                        <div class="col text-center">{{ test.wpm|floatformat:2 }}</div>
+                        <div class="col text-center">{{ test.accuracy|floatformat:0 }}%</div>
+                        <div class="col text-center">{{ test.duration }}s</div>
+                        <div class="col text-center">{{ test.correct_count }}</div>
+                        <div class="col text-center">{{ test.mistake_count }}</div>
+                    </div>
+                {% empty %}
+                    <div class="row">
+                        <div class="col text-muted">No test results found.</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content%}
+
+{% block scripts %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock scripts %}

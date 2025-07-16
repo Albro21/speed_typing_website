@@ -41,10 +41,12 @@ class CustomUser(AbstractUser):
 
     nickname = models.CharField(max_length=30)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-
+    bio = models.TextField(blank=True, null=True)
+    
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, blank=True)
     exp = models.IntegerField(default=0)
     daily_goal = models.IntegerField(choices=DAILY_GOAL_CHOICES, default=10)
+    date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.nickname} ({self.email})"

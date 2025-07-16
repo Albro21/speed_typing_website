@@ -17,6 +17,10 @@ body {
     border-color: var(--border) !important;
 }
 
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
 .card {
     background-color: var(--surface);
     color: var(--foreground);
@@ -171,4 +175,10 @@ a, a:hover, a:focus {
     background-color: var(--primary);
     color: var(--primary-foreground);
     border-color: var(--border);
+}
+
+.modal-content {
+    background-color: var(--surface);
+    color: var(--foreground);
+    border: 1px solid var(--border);
 }

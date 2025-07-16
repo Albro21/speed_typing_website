@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(dailyGoalForm);
             const formObj = Object.fromEntries(formData.entries());
 
-            const data = await sendRequest('/users/daily-goal/edit/', 'PATCH', JSON.stringify(formObj));
+            const data = await sendRequest('/users/daily-goal/edit/', 'PATCH', formObj);
 
             if (data.success) {
                 queueToast('Daily goal updated', 'success');

@@ -4,14 +4,17 @@ window.sendRequest = async function(url, method, body = null) {
     try {
         const options = {
             method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': window.csrfToken,
-            },
+            headers: {},
         };
 
-        if (body) {
+        // If body is FormData, don't manually set headers (browser will handle content type & boundary)
+        if (body instanceof FormData) {
             options.body = body;
+            options.headers['X-CSRFToken'] = window.csrfToken; // Include CSRF for file uploads too
+        } else if (body) {
+            options.body = JSON.stringify(body);
+            options.headers['Content-Type'] = 'application/json';
+            options.headers['X-CSRFToken'] = window.csrfToken;
         }
 
         const response = await fetch(url, options);
@@ -22,11 +25,12 @@ window.sendRequest = async function(url, method, body = null) {
         }
 
         const data = await response.json();
+
         if (data.status === 'error') {
             console.error(`Server returned error: Status: ${data.status}, Message: ${data.message}`);
         }
-        
-        return data
+
+        return data;
     } catch (error) {
         console.error('Request failed:', error);
         return false;
