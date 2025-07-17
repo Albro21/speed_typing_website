@@ -53,7 +53,7 @@
 				
 				<!-- Daily Goal -->
 				<div class="card d-flex flex-column justify-content-center align-items-center h-100 p-3" id="daily-goal">
-					<i class="bi bi-gear corner-icon fs-5 pointer" id="dailyGoalPopover" tabindex="0" data-bs-toggle="day-goal-popover" data-bs-trigger="focus" data-bs-html="true" title="Daily Goal"></i>
+					<i class="bi bi-gear corner-icon fs-5 pointer" id="dailyGoalPopover" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" title="Daily Goal"></i>
 					<div id="popover-daily-goal" class="d-none">
 						<form method="post" id="daily-goal-form" class="d-flex align-items-center gap-2 flex-nowrap custom-popover-form">
 							{% csrf_token %}
@@ -182,7 +182,6 @@
 						<div class="pointer d-flex align-items-center gap-1" id="chart-period-toggle">
 							<i class="bi bi-calendar-week fs-5" id="chart-icon"></i><span id="chart-period">Weekly</span>
 						</div>
-						<i class="bi bi-gear fs-5 pointer"></i>
 					</div>
 					<canvas id="history"></canvas>
 				</div>

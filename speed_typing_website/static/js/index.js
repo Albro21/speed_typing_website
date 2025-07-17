@@ -20,25 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
         trigger: 'click',
     });
 
+    let isPopoverVisible = false;
+
     popoverTrigger.addEventListener('shown.bs.popover', () => {
+        isPopoverVisible = true;
+
         const popoverId = popoverTrigger.getAttribute('aria-describedby');
         const popoverElement = document.getElementById(popoverId);
 
-        if (!popoverElement) {
-            return;
-        }
+        if (!popoverElement) return;
 
         const dailyGoalForm = popoverElement.querySelector('#daily-goal-form');
-
-        if (!dailyGoalForm) {
-            return;
-        }
+        if (!dailyGoalForm) return;
 
         const dailyGoalSelect = dailyGoalForm.querySelector('select[name="daily_goal"]');
-
-        if (!dailyGoalSelect) {
-            return;
-        }
+        if (!dailyGoalSelect) return;
 
         dailyGoalSelect.addEventListener('change', async (e) => {
             const formData = new FormData(dailyGoalForm);
@@ -53,6 +49,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(data.error || 'Failed to update daily goal', 'danger');
             }
         });
+    });
+
+    popoverTrigger.addEventListener('hidden.bs.popover', () => {
+        isPopoverVisible = false;
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!isPopoverVisible) return;
+
+        const popoverId = popoverTrigger.getAttribute('aria-describedby');
+        const popoverElement = document.getElementById(popoverId);
+
+        if (
+            !popoverTrigger.contains(event.target) &&
+            !(popoverElement && popoverElement.contains(event.target))
+        ) {
+            bootstrap.Popover.getInstance(popoverTrigger)?.hide();
+        }
     });
 });
 
