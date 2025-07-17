@@ -33,6 +33,11 @@ class CustomUser(AbstractUser):
         (30, '30:00'),
     ]
 
+    THEME_CHOICES = [
+        ('dark', 'Dark'),
+        ('light', 'Light')
+    ]
+
     username = None 
     email = models.EmailField(_('email address'), unique=True)
     USERNAME_FIELD = 'email'
@@ -47,6 +52,8 @@ class CustomUser(AbstractUser):
     exp = models.IntegerField(default=0)
     daily_goal = models.IntegerField(choices=DAILY_GOAL_CHOICES, default=10)
     date_joined = models.DateTimeField(auto_now_add=True)
+    
+    theme = models.CharField(max_length=20, choices=THEME_CHOICES, default='dark')
 
     def __str__(self):
         return f"{self.nickname} ({self.email})"
@@ -154,6 +161,10 @@ class CustomUser(AbstractUser):
                 break
             self.exp -= self.level.exp_to_next
             self.level = next_level
+        self.save()
+
+    def toggle_theme(self):
+        self.theme = 'light' if self.theme == 'dark' else 'dark'
         self.save()
 
 

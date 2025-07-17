@@ -10,12 +10,12 @@ window.sendRequest = async function(url, method, body = null) {
         // If body is FormData, don't manually set headers (browser will handle content type & boundary)
         if (body instanceof FormData) {
             options.body = body;
-            options.headers['X-CSRFToken'] = window.csrfToken; // Include CSRF for file uploads too
         } else if (body) {
             options.body = JSON.stringify(body);
             options.headers['Content-Type'] = 'application/json';
-            options.headers['X-CSRFToken'] = window.csrfToken;
         }
+
+        options.headers['X-CSRFToken'] = window.csrfToken;
 
         const response = await fetch(url, options);
 
@@ -66,3 +66,14 @@ window.showToast = function(message, type = 'info') {
 window.queueToast = function(message, type = 'info') {
     sessionStorage.setItem('toastMessage', JSON.stringify({message: message, type: type}));
 };
+
+// Theme toggle functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggleBtn = document.getElementById('theme-toggle-icon');
+    themeToggleBtn?.addEventListener('click', async () => {
+        const data = await sendRequest("/users/toggle-theme/", 'POST');
+        if (data && data.success) {
+            window.location.reload();
+        }
+    });
+});

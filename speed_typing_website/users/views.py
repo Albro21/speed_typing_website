@@ -102,3 +102,9 @@ def edit_profile(request):
 
     request.user.save()
     return JsonResponse({'success': True, 'message': 'Profile updated successfully.'})
+
+@require_http_methods(["POST"])
+@login_required
+def toggle_theme(request):
+    request.user.toggle_theme()
+    return JsonResponse({'success': True, 'theme': request.user.theme})

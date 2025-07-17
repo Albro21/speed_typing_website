@@ -1,3 +1,6 @@
+const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+const foregroundColor = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+
 const scrollContainer = document.querySelector('.card.overflow-auto');
 scrollContainer.addEventListener('wheel', (evt) => {
     if (evt.deltaY === 0) return;
@@ -162,8 +165,8 @@ function updateChartForPeriod(period) {
 				{
 					label: 'WPM',
 					data: filteredWPM,
-					borderColor: '#FFFFFF',
-					backgroundColor: '#212121',
+					borderColor: foregroundColor,
+					backgroundColor: secondaryColor,
 					fill: true,
 					tension: 0.2,
 					yAxisID: 'yWPM',
@@ -231,7 +234,7 @@ function updateChartForPeriod(period) {
 				legend: {
 					display: true,
 					labels: {
-						color: 'white'
+						color: foregroundColor,
 					}
 				}
 			}

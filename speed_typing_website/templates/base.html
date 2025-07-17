@@ -11,18 +11,33 @@
 	<!-- Bootstrap icons -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 	<!-- Custom styles -->
-	<link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+	{% if request.user.is_authenticated %}
+		{% if request.user.theme == 'light' %}
+			<link rel="stylesheet" href="{% static 'css/light_theme.css' %}">
+		{% else %}
+			<link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+		{% endif %}
+	{% else %}
+		<!-- Default for anonymous users -->
+		<link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+	{% endif %}
 	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
     {% block styles %}{% endblock styles %}    
 </head>
 <body>
 
 	<!-- Navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark">
+    <nav class="navbar navbar-expand-md">
 		<div class="container-md">
 
 			<!-- Brand -->
 			<a class="navbar-brand m-0" href="{% url 'index' %}">SpeedTyping</a>
+			{% if user.theme == 'light' %}
+				<i class="bi bi-brightness-high-fill ms-3 fs-5 pointer" id="theme-toggle-icon"></i>
+			{% else %}
+				<i class="bi bi-moon-fill ms-3 fs-5 pointer" id="theme-toggle-icon"></i>
+			{% endif %}
 
 			<!-- Main Navigation -->
 			<div class="collapse navbar-collapse" id="navbar">
@@ -54,7 +69,7 @@
 	</nav>
 
 	<!-- Content -->
-	<div class="container-md text-white" id="main-content">
+	<div class="container-md" id="main-content">
         {% block content %}{% endblock content %}
 	</div>
 
