@@ -25,6 +25,10 @@ class TextBase(models.Model):
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, default='easy')
     length = models.CharField(max_length=10, choices=LENGTH_CHOICES, default='medium')
 
+    more_numbers = models.BooleanField(default=False)
+    more_punctuation = models.BooleanField(default=False)
+    more_capitals = models.BooleanField(default=False)
+
     class Meta:
         abstract = True
 

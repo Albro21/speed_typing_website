@@ -89,12 +89,21 @@ def index(request):
     return render(request, 'typeapp/index.html', context)
 
 # Gets a random text based on the model, length, and difficulty
-def get_random_text(model, length, difficulty):
+def get_random_text(model, length, difficulty, extras_list):
     qs = model.objects.all()
+
     if length:
         qs = qs.filter(length=length)
     if difficulty:
         qs = qs.filter(difficulty=difficulty)
+
+    if 'numbers' in extras_list:
+        qs = qs.filter(more_numbers=True)
+    if 'punctuation' in extras_list:
+        qs = qs.filter(more_punctuation=True)
+    if 'capitals' in extras_list:
+        qs = qs.filter(more_capitals=True)
+
     return qs.order_by('?').first()
 
 # Converts a value to an int or returns the default if it can't be converted
@@ -136,11 +145,11 @@ def test(request):
     text_to_display = ''
 
     if text_type == 'story':
-        story = get_random_text(Story, length, difficulty)
+        story = get_random_text(Story, length, difficulty, extras_list)
         text_to_display = story.text if story else ''
 
     elif text_type == 'article':
-        article = get_random_text(Article, length, difficulty)
+        article = get_random_text(Article, length, difficulty, extras_list)
         text_to_display = article.text if article else ''
 
     elif text_type == 'random':
