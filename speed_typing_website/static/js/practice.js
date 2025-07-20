@@ -61,6 +61,7 @@ function toggleOptionsVisibility() {
     const lengthOptions = document.getElementById('length-options');
     const wordCountOptions = document.getElementById('word-count-options');
     const extrasOptions = document.getElementById('extras');
+    const difficultyOptions = document.getElementById('difficulty-options');
 
     timeOptions.classList.replace(
         state.test_type === 'timed' ? 'd-none' : 'd-flex',
@@ -88,6 +89,13 @@ function toggleOptionsVisibility() {
         state.text_type === 'random' ? 'd-flex' : 'd-none',
         state.text_type === 'random' ? 'd-none' : 'd-flex'
     );
+
+    // Hide difficulty-options for story/article, show for random
+    if (state.text_type === 'random') {
+        difficultyOptions.classList.replace('d-none', 'd-flex');
+    } else {
+        difficultyOptions.classList.replace('d-flex', 'd-none');
+    }
 }
 
 // Update button states based on current state
@@ -132,7 +140,8 @@ function adjustStateForGroup(group, value) {
             delete state.length;
             if (!state.word_count) state.word_count = '50';
         } else {
-            if (!state.difficulty) state.difficulty = 'medium';
+            // Story or Article: clear difficulty
+            delete state.difficulty;
             delete state.word_count;
             if (!state.length) state.length = 'medium';
         }

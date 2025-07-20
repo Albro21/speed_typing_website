@@ -131,7 +131,6 @@
                 <div class="row py-2 mx-0">
                     <div class="col-2"><small class="text-muted">Date</small></div>
                     <div class="col text-center"><small class="text-muted">Type</small></div>
-                    <div class="col text-center"><small class="text-muted">Difficulty</small></div>
                     <div class="col text-center"><small class="text-muted">WPM</small></div>
                     <div class="col text-center"><small class="text-muted">Accuracy</small></div>
                     <div class="col text-center"><small class="text-muted">Time</small></div>
@@ -142,7 +141,6 @@
                     <div class="row py-2 mx-0 d-flex align-items-center {% if forloop.counter0|divisibleby:2 %}secondary-bg{% endif %}">
                         <div class="col-2">{{ test.created_at|date:"d M Y" }}<br>{{ test.created_at|date:"H:i" }}</div>
                         <div class="col text-center">{{ test.test_type|capfirst }}</div>
-                        <div class="col text-center">{{ test.difficulty|capfirst }}</div>
                         <div class="col text-center">{{ test.wpm|floatformat:2 }}</div>
                         <div class="col text-center">{{ test.accuracy|floatformat:0 }}%</div>
                         <div class="col text-center">{{ test.duration }}s</div>

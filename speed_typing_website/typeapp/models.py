@@ -8,12 +8,6 @@ LENGTH_CHOICES = [
     ('long', 'Long'),
 ]
 
-DIFFICULTY_CHOICES = [
-    ('easy', 'Easy'),
-    ('medium', 'Medium'),
-    ('hard', 'Hard'),
-]
-
 TEST_TYPE_CHOICES = [
     ('timed', 'Timed'),
     ('fixed', 'Fixed-Length'),
@@ -22,7 +16,6 @@ TEST_TYPE_CHOICES = [
 class TextBase(models.Model):
     title = models.CharField(max_length=200)
     text = models.TextField()
-    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, default='easy')
     length = models.CharField(max_length=10, choices=LENGTH_CHOICES, default='medium')
 
     more_numbers = models.BooleanField(default=False)
@@ -59,7 +52,6 @@ class TypingTestResult(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='test_results', blank=True, null=True)
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='test_results', blank=True, null=True)
     test_type = models.CharField(max_length=10, choices=TEST_TYPE_CHOICES, blank=True, null=True)
-    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, blank=True, null=True)
     length = models.CharField(max_length=10, choices=LENGTH_CHOICES, blank=True, null=True)
 
     wpm = models.FloatField(help_text="Words per minute", blank=True, null=True)

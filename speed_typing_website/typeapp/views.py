@@ -88,14 +88,12 @@ def index(request):
     }
     return render(request, 'typeapp/index.html', context)
 
-# Gets a random text based on the model, length, and difficulty
-def get_random_text(model, length, difficulty, extras_list):
+# Gets a random text based on the model, length, and extras_list
+def get_random_text(model, length, extras_list):
     qs = model.objects.all()
 
     if length:
         qs = qs.filter(length=length)
-    if difficulty:
-        qs = qs.filter(difficulty=difficulty)
 
     if 'numbers' in extras_list:
         qs = qs.filter(more_numbers=True)
@@ -139,17 +137,17 @@ def test(request):
     extras = request.GET.get('extras', '')
     extras_list = [e.strip() for e in extras.split(',')] if extras else []
 
-    # Get a random text based on the model, length, and difficulty
+    # Get a random text based on the model, length, and extras_list
     story = None
     article = None
     text_to_display = ''
 
     if text_type == 'story':
-        story = get_random_text(Story, length, difficulty, extras_list)
+        story = get_random_text(Story, length, extras_list)
         text_to_display = story.text if story else ''
 
     elif text_type == 'article':
-        article = get_random_text(Article, length, difficulty, extras_list)
+        article = get_random_text(Article, length, extras_list)
         text_to_display = article.text if article else ''
 
     elif text_type == 'random':
@@ -173,14 +171,13 @@ def test(request):
 
     # Fallback to story
     else:
-        story = get_random_text(Story, length, difficulty)
+        story = get_random_text(Story, length)
         text_to_display = story.text if story else ''
 
     context = {
         'test_type': test_type,
         'duration': duration,
         'text_type': text_type,
-        'difficulty': difficulty,
         'length': length,
         'extras': extras_list,
         'story_id': story.id if story else 0,
@@ -211,7 +208,6 @@ def create_result(request):
     result = TypingTestResult.objects.create(
         user=request.user,
         test_type=data.get('test_type'),
-        difficulty=data.get('difficulty'),
         length=data.get('length'),
         story=story,
         article=article,
